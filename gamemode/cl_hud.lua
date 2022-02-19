@@ -352,7 +352,7 @@ function GM:DrawGameHUD(ply)
 		drawTextShadow(name, "MersRadial", ScrW() - 20, ScrH() - 10, color, 2, TEXT_ALIGN_BOTTOM)
 	end
 
-	local shouldDraw = hook.Run("HUDShoulDraw", "RoundTime")
+	local shouldDraw = hook.Run("HUDShouldDraw", "RoundTime")
 	if shouldDraw != false then
 		local max = self.RoundSettings.RoundMaxLength
 		if max != -1 then
