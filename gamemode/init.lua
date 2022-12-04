@@ -1,17 +1,17 @@
 -- add cs lua all the cl_ or sh_ files
-local folders = {
-	(GM or GAMEMODE).Folder:sub(11) .. "/gamemode/"
-}
-for k, folder in pairs(folders) do
-	local files, subfolders = file.Find(folder .. "*", "LUA")
-	for k2, filename in pairs(files) do
-		if filename:sub(1, 3) == "cl_" or filename:sub(1, 3) == "sh_" or filename == "shared.lua"
-			or folder:match("/sh_") or folder:match("/cl_") then
+local folders = {(GM or GAMEMODE).Folder:sub(11) .. "/gamemode/"}
+
+for _,folder in pairs(folders) do
+	local files,subfolders = file.Find(folder .. "*","LUA")
+
+	for _,filename in pairs(files) do
+		if filename:sub(1,3) == "cl_" or filename:sub(1,3) == "sh_" or filename == "shared.lua" or folder:match("/sh_") or folder:match("/cl_") then
 			AddCSLuaFile(folder .. filename)
 		end
 	end
-	for k3, subfolder in pairs(subfolders) do
-		table.insert(folders, folder .. subfolder .. "/")
+
+	for _,subfolder in pairs(subfolders) do
+		table.insert(folders,folder .. subfolder .. "/")
 	end
 end
 
@@ -34,28 +34,25 @@ include("sv_bystandername.lua")
 include("sv_adminpanel.lua")
 include("sv_tker.lua")
 include("sv_flashlight.lua")
-
 resource.AddFile("materials/thieves/footprint.vmt")
 resource.AddFile("materials/murder/melon_logo_scoreboard.png")
-
-GM.ShowBystanderTKs = CreateConVar("mu_show_bystander_tks", 1, bit.bor(FCVAR_NOTIFY), "Should show name of killer in chat on a bystander team kill" )
-GM.MurdererFogTime = CreateConVar("mu_murderer_fogtime", 60 * 4, bit.bor(FCVAR_NOTIFY), "Time (in seconds) it takes for a Murderer to show fog for no kills, 0 to disable" )
-GM.TKPenaltyTime = CreateConVar("mu_tk_penalty_time", 20, bit.bor(FCVAR_NOTIFY), "Time (in seconds) for a bystander to be penalised for a team kill" )
-GM.LocalChat = CreateConVar("mu_localchat", 0, bit.bor(FCVAR_NOTIFY), "Local chat, when enabled only nearby players can hear other players" )
-GM.LocalChatRange = CreateConVar("mu_localchat_range", 550, bit.bor(FCVAR_NOTIFY), "The range at which you can hear other players" )
-GM.CanDisguise = CreateConVar("mu_disguise", 1, bit.bor(FCVAR_NOTIFY), "Whether the murderer can disguise as dead players" )
-GM.RemoveDisguiseOnKill = CreateConVar("mu_disguise_removeonkill", 1, bit.bor(FCVAR_NOTIFY), "Remove the murderer's disguise when he kills someone" )
-GM.AFKMoveToSpec = CreateConVar("mu_moveafktospectator", 1, bit.bor(FCVAR_NOTIFY), "Should we move AFK players to spectator on round end" )
-GM.RoundLimit = CreateConVar("mu_roundlimit", 0, bit.bor(FCVAR_NOTIFY), "Number of rounds we should play before map change" )
-GM.DelayAfterEnoughPlayers = CreateConVar("mu_delay_after_enough_players", 10, bit.bor(FCVAR_NOTIFY), "Time (in seconds) we should wait to start the round after enough players have joined" )
-GM.FlashlightBattery = CreateConVar("mu_flashlight_battery", 10, bit.bor(FCVAR_NOTIFY), "How long the flashlight should last in seconds (0 for infinite)" )
-GM.Language = CreateConVar("mu_language", "", bit.bor(FCVAR_NOTIFY), "The language Murder should use" )
-GM.RoundMaxLength = CreateConVar("mu_round_length", -1, bit.bor(FCVAR_NOTIFY), "How long are the rounds in seconds? (-1 to disable)" )
-
+GM.ShowBystanderTKs = CreateConVar("mu_show_bystander_tks",1,bit.bor(FCVAR_NOTIFY),"Should show name of killer in chat on a bystander team kill")
+GM.MurdererFogTime = CreateConVar("mu_murderer_fogtime",60 * 4,bit.bor(FCVAR_NOTIFY),"Time (in seconds) it takes for a Murderer to show fog for no kills, 0 to disable")
+GM.TKPenaltyTime = CreateConVar("mu_tk_penalty_time",20,bit.bor(FCVAR_NOTIFY),"Time (in seconds) for a bystander to be penalised for a team kill")
+GM.LocalChat = CreateConVar("mu_localchat",0,bit.bor(FCVAR_NOTIFY),"Local chat, when enabled only nearby players can hear other players")
+GM.LocalChatRange = CreateConVar("mu_localchat_range",550,bit.bor(FCVAR_NOTIFY),"The range at which you can hear other players")
+GM.CanDisguise = CreateConVar("mu_disguise",1,bit.bor(FCVAR_NOTIFY),"Whether the murderer can disguise as dead players")
+GM.RemoveDisguiseOnKill = CreateConVar("mu_disguise_removeonkill",1,bit.bor(FCVAR_NOTIFY),"Remove the murderer's disguise when he kills someone")
+GM.AFKMoveToSpec = CreateConVar("mu_moveafktospectator",1,bit.bor(FCVAR_NOTIFY),"Should we move AFK players to spectator on round end")
+GM.RoundLimit = CreateConVar("mu_roundlimit",0,bit.bor(FCVAR_NOTIFY),"Number of rounds we should play before map change")
+GM.DelayAfterEnoughPlayers = CreateConVar("mu_delay_after_enough_players",10,bit.bor(FCVAR_NOTIFY),"Time (in seconds) we should wait to start the round after enough players have joined")
+GM.FlashlightBattery = CreateConVar("mu_flashlight_battery",10,bit.bor(FCVAR_NOTIFY),"How long the flashlight should last in seconds (0 for infinite)")
+GM.Language = CreateConVar("mu_language","",bit.bor(FCVAR_NOTIFY),"The language Murder should use")
+GM.RoundMaxLength = CreateConVar("mu_round_length",-1,bit.bor(FCVAR_NOTIFY),"How long are the rounds in seconds? (-1 to disable)")
 -- replicated
-GM.ShowAdminsOnScoreboard = CreateConVar("mu_scoreboard_show_admins", 1, bit.bor(0), "Should show admins on scoreboard" )
-GM.AdminPanelAllowed = CreateConVar("mu_allow_admin_panel", 1, bit.bor(FCVAR_NOTIFY), "Should allow admins to use mu_admin_panel" )
-GM.ShowSpectateInfo = CreateConVar("mu_show_spectate_info", 1, bit.bor(FCVAR_NOTIFY), "Should show players name and color to spectators" )
+GM.ShowAdminsOnScoreboard = CreateConVar("mu_scoreboard_show_admins",1,bit.bor(0),"Should show admins on scoreboard")
+GM.AdminPanelAllowed = CreateConVar("mu_allow_admin_panel",1,bit.bor(FCVAR_NOTIFY),"Should allow admins to use mu_admin_panel")
+GM.ShowSpectateInfo = CreateConVar("mu_show_spectate_info",1,bit.bor(FCVAR_NOTIFY),"Should show players name and color to spectators")
 
 function GM:Initialize()
 	self:EnsureTablesExist()
@@ -70,16 +67,18 @@ end
 
 function GM:InitPostEntity()
 	local canAdd = self:CountLootItems() <= 0
-	for k, ent in pairs(ents.FindByClass("mu_loot")) do
+
+	for _,ent in pairs(ents.FindByClass("mu_loot")) do
 		if canAdd then
 			self:AddLootItem(ent)
 		end
 	end
+
 	self:InitPostEntityAndMapCleanup()
 end
 
 function GM:InitPostEntityAndMapCleanup()
-	for k, ent in pairs(ents.GetAll()) do
+	for _,ent in pairs(ents.GetAll()) do
 		if ent:IsWeapon() or ent:GetClass():match("^weapon_") then
 			ent:Remove()
 		end
@@ -89,7 +88,7 @@ function GM:InitPostEntityAndMapCleanup()
 		end
 	end
 
-	for k, ent in pairs(ents.FindByClass("mu_loot")) do
+	for _,ent in pairs(ents.FindByClass("mu_loot")) do
 		ent:Remove()
 	end
 	-- self:SpawnLoot()
@@ -101,26 +100,27 @@ function GM:Think()
 	self:LootThink()
 	self:FlashlightThink()
 
-	for k, ply in pairs(player.GetAll()) do
-		if ply:IsCSpectating() and IsValid(ply:GetCSpectatee()) and (!ply.LastSpectatePosSet or ply.LastSpectatePosSet < CurTime()) then
+	for _,ply in pairs(player.GetAll()) do
+		if ply:IsCSpectating() and IsValid(ply:GetCSpectatee()) and (not ply.LastSpectatePosSet or ply.LastSpectatePosSet < CurTime()) then
 			ply.LastSpectatePosSet = CurTime() + 0.25
 			ply:SetPos(ply:GetCSpectatee():GetPos())
 		end
-		if !ply.HasMoved and (ply:IsBot() or ply:KeyDown(IN_FORWARD) or ply:KeyDown(IN_JUMP) or ply:KeyDown(IN_ATTACK) or ply:KeyDown(IN_ATTACK2)
-				or ply:KeyDown(IN_MOVELEFT) or ply:KeyDown(IN_MOVERIGHT) or ply:KeyDown(IN_BACK) or ply:KeyDown(IN_DUCK)) then
+
+		if not ply.HasMoved and (ply:IsBot() or ply:KeyDown(IN_FORWARD) or ply:KeyDown(IN_JUMP) or ply:KeyDown(IN_ATTACK) or ply:KeyDown(IN_ATTACK2) or ply:KeyDown(IN_MOVELEFT) or ply:KeyDown(IN_MOVERIGHT) or ply:KeyDown(IN_BACK) or ply:KeyDown(IN_DUCK)) then
 			ply.HasMoved = true
 		end
+
 		if ply.LastTKTime and ply.LastTKTime + self:GetTKPenaltyTime() < CurTime() then
 			ply:SetTKer(false)
 		end
 	end
 end
 
-function GM:AllowPlayerPickup( ply, ent )
+function GM:AllowPlayerPickup()
 	return true
 end
 
-function GM:PlayerNoClip( ply )
+function GM:PlayerNoClip(ply)
 	return ply:IsListenServerHost() or ply:GetMoveType() == MOVETYPE_NOCLIP
 end
 
@@ -131,38 +131,34 @@ function GM:OnStartRound()
 end
 
 function GM:SendMessageAll(msg)
-	for k,v in pairs(player.GetAll()) do
+	for _,v in pairs(player.GetAll()) do
 		v:ChatPrint(msg)
 	end
 end
 
-function GM:EntityTakeDamage( ent, dmginfo )
+function GM:EntityTakeDamage(_,dmginfo)
 	-- disable all prop damage
-	if IsValid(dmginfo:GetAttacker()) and (dmginfo:GetAttacker():GetClass() == "prop_physics" or dmginfo:GetAttacker():GetClass() == "prop_physics_multiplayer" or dmginfo:GetAttacker():GetClass() == "prop_physics_respawnable" or dmginfo:GetAttacker():GetClass() == "func_physbox") then
-		return true
-	end
-
-	if IsValid(dmginfo:GetInflictor()) and (dmginfo:GetInflictor():GetClass() == "prop_physics" or dmginfo:GetInflictor():GetClass() == "prop_physics_multiplayer" or dmginfo:GetInflictor():GetClass() == "prop_physics_respawnable" or dmginfo:GetInflictor():GetClass() == "func_physbox") then
-		return true
-	end
-
-
+	if IsValid(dmginfo:GetAttacker()) and (dmginfo:GetAttacker():GetClass() == "prop_physics" or dmginfo:GetAttacker():GetClass() == "prop_physics_multiplayer" or dmginfo:GetAttacker():GetClass() == "prop_physics_respawnable" or dmginfo:GetAttacker():GetClass() == "func_physbox") then return true end
+	if IsValid(dmginfo:GetInflictor()) and (dmginfo:GetInflictor():GetClass() == "prop_physics" or dmginfo:GetInflictor():GetClass() == "prop_physics_multiplayer" or dmginfo:GetInflictor():GetClass() == "prop_physics_respawnable" or dmginfo:GetInflictor():GetClass() == "func_physbox") then return true end
 end
 
 function file.ReadDataAndContent(path)
-	local f = file.Read(path, "DATA")
+	local f = file.Read(path,"DATA")
 	if f then return f end
-	f = file.Read(GAMEMODE.Folder .. "/content/data/" .. path, "GAME")
+	f = file.Read(GAMEMODE.Folder .. "/content/data/" .. path,"GAME")
+
 	return f
 end
 
 util.AddNetworkString("reopen_round_board")
-function GM:ShowTeam(ply) -- F2
+
+-- F2
+function GM:ShowTeam(ply)
 	net.Start("reopen_round_board")
 	net.Send(ply)
 end
 
-concommand.Add("mu_version", function (ply)
+concommand.Add("mu_version",function(ply)
 	if IsValid(ply) then
 		ply:ChatPrint("Murder by Mechanical Mind version " .. tostring(GAMEMODE.Version or "error"))
 	else

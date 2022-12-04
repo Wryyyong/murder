@@ -1,9 +1,8 @@
-local PlayerMeta = FindMetaTable("Player")
+--local PlayerMeta = FindMetaTable("Player")
 local EntityMeta = FindMetaTable("Entity")
 
-function GM:PlayerFootstep(ply, pos, foot, sound, volume, filter)
-	self:FootStepsFootstep(ply, pos, foot, sound, volume, filter)
-
+function GM:PlayerFootstep(ply,pos,foot,sound,volume,filter)
+	self:FootStepsFootstep(ply,pos,foot,sound,volume,filter)
 end
 
 function EntityMeta:GetPlayerColor()
@@ -12,8 +11,7 @@ end
 
 function EntityMeta:GetBystanderName()
 	local name = self:GetNWString("bystanderName")
-	if !name or name == "" then
-		return "Bystander"
-	end
+	if not name or name == "" then return "Bystander" end
+
 	return name
 end

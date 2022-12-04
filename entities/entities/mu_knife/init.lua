@@ -1,42 +1,38 @@
-
-AddCSLuaFile( "cl_init.lua" )
-AddCSLuaFile( "shared.lua" )
-include('shared.lua')
-
+AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("shared.lua")
+include("shared.lua")
 
 function ENT:Initialize()
 	self:SetModel("models/weapons/w_knife_t.mdl")
-
-	self:PhysicsInit( SOLID_VPHYSICS )
+	self:PhysicsInit(SOLID_VPHYSICS)
 	-- self:PhysicsInitSphere(50)
-	self:SetMoveType( MOVETYPE_VPHYSICS )
-	self:SetSolid( SOLID_VPHYSICS )
+	self:SetMoveType(MOVETYPE_VPHYSICS)
+	self:SetSolid(SOLID_VPHYSICS)
 	self:DrawShadow(false)
-
-	// don't do impact damage
+	-- don't do impact damage
 	-- self:SetTrigger(true)
 	-- self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-
 	local phys = self:GetPhysicsObject()
+
 	if IsValid(phys) then
 		phys:Wake()
 	end
 
-	self:Fire("kill", "", 30)
-
+	self:Fire("kill","",30)
 	self.HitSomething = false
 end
 
-function ENT:Use(ply)
+function ENT:Use()
 	self.RemoveNext = true
 end
 
 function ENT:Think()
-	if self.RemoveNext && IsValid(self) then
+	if self.RemoveNext and IsValid(self) then
 		self.RemoveNext = false
 		self:Remove()
 	end
-	if self.HitSomething && self:GetVelocity():Length2D() < 1.5 then
+
+	if self.HitSomething and self:GetVelocity():Length2D() < 1.5 then
 		self.HitSomething = false
 		local knife = ents.Create("weapon_mu_knife")
 		knife:SetPos(self:GetPos())
@@ -44,12 +40,14 @@ function ENT:Think()
 		knife:Spawn()
 		self:Remove()
 		local phys = knife:GetPhysicsObject()
+
 		if IsValid(phys) then
 			phys:SetVelocity(self:GetVelocity())
 		end
 	end
 
 	self:NextThink(CurTime())
+
 	return true
 end
 
@@ -59,60 +57,46 @@ local function addangle(ang,ang2)
 	ang:RotateAroundAxis(ang:Right(),ang2.p) -- pitch
 end
 
-function ENT:PhysicsCollide( data, physobj )
+function ENT:PhysicsCollide(data)
 	-- print(data.OurOldVelocity:Length())
-
 	if self.HitSomething then return end
 	if self.RemoveNext then return end
-
 	local ply = data.HitEntity
-	if IsValid(ply) && ply:IsPlayer() then
 
+	if IsValid(ply) and ply:IsPlayer() then
 		-- self.RemoveNext = true
 		-- self:SetColor(Color(0,0,0,0))
-
 		local dmg = DamageInfo()
 		dmg:SetDamage(120)
 		dmg:SetAttacker(self:GetOwner())
 		ply:TakeDamageInfo(dmg)
-		self:EmitSound("physics/flesh/flesh_squishy_impact_hard" .. math.random(1, 4) .. ".wav")
+		self:EmitSound("physics/flesh/flesh_squishy_impact_hard" .. math.random(1,4) .. ".wav")
+		addangle(ply:GetAngles() * 1,Angle(-60,0,0))
 
-		local pos = ply:GetPos() + Vector(00,0,40)
-		local ang = ply:GetAngles() * 1
-		addangle(ang, Angle(-60,0,0))
-
-		timer.Simple(0, function ()
+		timer.Simple(0,function()
 			local rag = ply:GetRagdollEntity()
 
 			if IsValid(rag) then
-				local pos, ang = rag:GetBonePosition(0)
-				local vec = Vector(0, 16, -14)
+				local pos,ang = rag:GetBonePosition(0)
+				local vec = Vector(0,16,-14)
 				vec:Rotate(ang)
 				pos = pos + vec
-				addangle(ang, Angle(30, -90, 0))
-
+				addangle(ang,Angle(30,-90,0))
 				-- local knife = ents.Create("prop_physics")
 				-- knife:SetModel("models/weapons/w_knife_t.mdl")
 				-- knife:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				-- knife:SetPos(pos)
 				-- knife:SetAngles(ang)
 				-- knife:Spawn()
-
 				-- local phys = knife:GetPhysicsObject()
 				-- if IsValid(phys) then
 				-- 	phys:EnableCollisions(false)
 				-- end
-
-
 				-- constraint.Weld(rag, knife, 0, 0, 0, true)
-
 				-- rag:CallOnRemove("knife_cleanup", function() SafeRemoveEntity(knife) end)
-
 			end
-
 		end)
 	end
 
 	self.HitSomething = true
 end
-

@@ -1,22 +1,25 @@
 util.AddNetworkString("add_footstep")
 util.AddNetworkString("clear_footsteps")
 
-function GM:FootstepsOnFootstep(ply, pos, foot, sound, volume, filter)
+function GM:FootstepsOnFootstep(ply,pos)
 	net.Start("add_footstep")
 	net.WriteEntity(ply)
 	net.WriteVector(pos)
 	net.WriteAngle(ply:GetAimVector():Angle())
 	local tab = {}
-	for k, plyr in pairs(player.GetAll()) do
+
+	for _,plyr in pairs(player.GetAll()) do
 		if self:CanSeeFootsteps(plyr) then
-			table.insert(tab, plyr)
+			table.insert(tab,plyr)
 		end
 	end
+
 	net.Send(tab)
 end
 
 function GM:CanSeeFootsteps(ply)
-	if ply:GetMurderer() && ply:Alive() then return true end
+	if ply:GetMurderer() and ply:Alive() then return true end
+
 	return false
 end
 

@@ -1,31 +1,32 @@
 util.AddNetworkString("spectating_status")
-
 local PlayerMeta = FindMetaTable("Player")
 
-function PlayerMeta:CSpectate(mode, spectatee)
+function PlayerMeta:CSpectate(mode,spectatee)
 	mode = mode or OBS_MODE_IN_EYE
 	self:Spectate(mode)
+
 	if IsValid(spectatee) then
 		self:SpectateEntity(spectatee)
 		self.Spectatee = spectatee
 	else
 		self.Spectatee = nil
 	end
+
 	self.SpectateMode = mode
 	self.Spectating = true
 	net.Start("spectating_status")
-	net.WriteInt(self.SpectateMode or -1, 8)
+	net.WriteInt(self.SpectateMode or -1,8)
 	net.WriteEntity(self.Spectatee or Entity(-1))
 	net.Send(self)
 end
 
-function PlayerMeta:UnCSpectate(mode, spectatee)
+function PlayerMeta:UnCSpectate()
 	self:UnSpectate()
 	self.SpectateMode = nil
 	self.Spectatee = nil
 	self.Spectating = false
 	net.Start("spectating_status")
-	net.WriteInt(-1, 8)
+	net.WriteInt(-1,8)
 	net.WriteEntity(Entity(-1))
 	net.Send(self)
 end
@@ -42,35 +43,40 @@ function PlayerMeta:GetCSpectateMode()
 	return self.SpectateMode
 end
 
-function GM:SpectateNext(ply, direction)
+function GM:SpectateNext(ply,direction)
 	direction = direction or 1
-
 	local players = {}
 	local index = 1
-	for k, v in pairs(team.GetPlayers(2)) do
+
+	for _,v in pairs(team.GetPlayers(2)) do
 		if v:Alive() then
-			table.insert(players, v)
+			table.insert(players,v)
+
 			if v == ply:GetCSpectatee() then
 				index = #players
 			end
 		end
 	end
+
 	if #players > 0 then
 		index = index + direction
+
 		if index > #players then
 			index = 1
 		end
+
 		if index < 1 then
 			index = #players
 		end
 
 		local ent = players[index]
+
 		if IsValid(ent) then
-			ply:CSpectate(OBS_MODE_IN_EYE, ent)
+			ply:CSpectate(OBS_MODE_IN_EYE,ent)
 		else
 			if IsValid(ply:GetRagdollEntity()) then
-				if ply:GetCSpectating() != ply:GetRagdollEntity() then
-					ply:CSpectate(OBS_MODE_CHASE, ply:GetRagdollEntity())
+				if ply:GetCSpectating() ~= ply:GetRagdollEntity() then
+					ply:CSpectate(OBS_MODE_CHASE,ply:GetRagdollEntity())
 				end
 			else
 				ply:CSpectate(OBS_MODE_ROAMING)
@@ -82,10 +88,8 @@ function GM:SpectateNext(ply, direction)
 end
 
 function GM:ChooseSpectatee(ply)
-
 	-- if ((!ply.SpectateTime or ply.SpectateTime < CurTime()) && ply:KeyPressed(IN_ATTACK))
 	--  or !IsValid(ply:GetCSpectatee()) or (ply:GetCSpectatee():IsPlayer() && !ply:GetCSpectatee():Alive()) then
-
 	-- 	// recalculate spectating
 	-- 	local players = team.GetPlayers(2)
 	-- 	for k,v in pairs(players) do
@@ -93,7 +97,6 @@ function GM:ChooseSpectatee(ply)
 	-- 			players[k] = nil
 	-- 		end
 	-- 	end
-
 	-- 	local ent = table.Random(players)
 	-- 	if IsValid(ent) then
 	-- 		ply:CSpectate(OBS_MODE_IN_EYE, ent)
@@ -105,10 +108,9 @@ function GM:ChooseSpectatee(ply)
 	-- 		ply:CSpectate(OBS_MODE_ROAMING)
 	-- 	end
 	-- end
-
-	if !ply.SpectateTime or ply.SpectateTime < CurTime() then
-
+	if not ply.SpectateTime or ply.SpectateTime < CurTime() then
 		local direction
+
 		if ply:KeyPressed(IN_ATTACK) then
 			direction = 1
 		elseif ply:KeyPressed(IN_ATTACK2) then
@@ -116,12 +118,12 @@ function GM:ChooseSpectatee(ply)
 		end
 
 		if direction then
-			self:SpectateNext(ply, direction)
+			self:SpectateNext(ply,direction)
 		end
 	end
 
 	-- if invalid or dead
-	if !IsValid(ply:GetCSpectatee()) or ( ply:GetCSpectatee():IsPlayer() && !ply:GetCSpectatee():Alive() ) then
+	if not IsValid(ply:GetCSpectatee()) or ply:GetCSpectatee():IsPlayer() and not ply:GetCSpectatee():Alive() then
 		self:SpectateNext(ply)
 	end
 end
