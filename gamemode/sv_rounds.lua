@@ -251,24 +251,18 @@ function GM:EndTheRound(reason,murderer)
 	net.Start("DeclareWinner")
 	net.WriteUInt(reason,2)
 
-	net.WriteEntity((murderer and murderer) or Entity(0))
+	local plyIdxBits = math.ceil(math.log(game.MaxPlayers(),2))
+	local isMurdererHere = IsValid(murderer)
 
-	if murderer then
-		net.WriteEntity(murderer)
-		net.WriteVector(murderer:GetPlayerColor())
-		net.WriteString(murderer:GetBystanderName())
-	else
-		net.WriteEntity(Entity(0))
-		net.WriteVector(Vector(1,1,1))
-		net.WriteString("?")
+	net.WriteBool(isMurdererHere)
+	if isMurdererHere then
+		net.WriteUInt(murderer:EntIndex() - 1,plyIdxBits)
 	end
 
 	for _,ply in pairs(team.GetPlayers(2)) do
 		net.WriteBool(true)
-		net.WriteEntity(ply)
+		net.WriteUInt(ply:EntIndex() - 1,plyIdxBits)
 		net.WriteUInt(ply.LootCollected,8)
-		net.WriteVector(ply:GetPlayerColor())
-		net.WriteString(ply:GetBystanderName())
 	end
 
 	net.WriteBool(false)

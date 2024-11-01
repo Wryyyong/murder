@@ -1,24 +1,31 @@
-local menu
+local rEndMenu
+
+local colors = {}
+colors.menuBg = Color(40,40,40,255)
+colors.winnerPnlBg = Color(50,50,50,255)
+colors.menuIsDown = Color(180,180,180,255)
+colors.menuHovered = Color(220,220,220,255)
+colors.menuElse = Color(255,255,255,255)
 
 function GM:DisplayEndRoundBoard(data)
-	if IsValid(menu) then
-		menu:Remove()
+	if IsValid(rEndMenu) then
+		rEndMenu:Remove()
 	end
 
-	menu = vgui.Create("DFrame")
-	menu:SetSize(ScrW() * 0.8,ScrH() * 0.8)
-	menu:Center()
-	menu:SetTitle("")
-	menu:MakePopup()
-	menu:SetKeyboardInputEnabled(false)
-	menu:SetDeleteOnClose(false)
+	rEndMenu = vgui.Create("DFrame")
+	rEndMenu:SetSize(ScrW() * 0.8,ScrH() * 0.8)
+	rEndMenu:Center()
+	rEndMenu:SetTitle("")
+	rEndMenu:MakePopup()
+	rEndMenu:SetKeyboardInputEnabled(false)
+	rEndMenu:SetDeleteOnClose(false)
 
-	function menu:Paint()
-		surface.SetDrawColor(Color(40,40,40,255))
-		surface.DrawRect(0,0,menu:GetWide(),menu:GetTall())
+	function rEndMenu:Paint()
+		surface.SetDrawColor(colors.menuBg)
+		surface.DrawRect(0,0,rEndMenu:GetWide(),rEndMenu:GetTall())
 	end
 
-	local winnerPnl = vgui.Create("DPanel",menu)
+	local winnerPnl = vgui.Create("DPanel",rEndMenu)
 	winnerPnl:DockPadding(24,24,24,24)
 	winnerPnl:Dock(TOP)
 
@@ -27,7 +34,7 @@ function GM:DisplayEndRoundBoard(data)
 	end
 
 	function winnerPnl:Paint(w,h)
-		surface.SetDrawColor(Color(50,50,50,255))
+		surface.SetDrawColor(colors.winnerPnlBg)
 		surface.DrawRect(2,2,w - 4,h - 4)
 	end
 
@@ -54,33 +61,29 @@ function GM:DisplayEndRoundBoard(data)
 	function murdererPnl:Paint()
 	end
 
-	if data.murdererName then
-		local col = data.murdererColor
+	local msgs = Translator:AdvVarTranslate(translate.endroundMurdererWas,{
+		murderer = {
+			text = data.murderer.byName .. data.murderer.realName,
+			color = data.murderer.color
+		}
+	})
 
-		local msgs = Translator:AdvVarTranslate(translate.endroundMurdererWas,{
-			murderer = {
-				text = data.murdererName,
-				color = Color(col.x * 255,col.y * 255,col.z * 255)
-			}
-		})
-
-		for _,msg in pairs(msgs) do
-			local was = vgui.Create("DLabel",murdererPnl)
-			was:Dock(LEFT)
-			was:SetText(msg.text)
-			was:SetFont("MersRadialSmall")
-			was:SetTextColor(msg.color or color_white)
-			was:SetAutoStretchVertical(true)
-			was:SizeToContentsX()
-		end
+	for _,msg in pairs(msgs) do
+		local was = vgui.Create("DLabel",murdererPnl)
+		was:Dock(LEFT)
+		was:SetText(msg.text)
+		was:SetFont("MersRadialSmall")
+		was:SetTextColor(msg.color or color_white)
+		was:SetAutoStretchVertical(true)
+		was:SizeToContentsX()
 	end
 
-	local lootPnl = vgui.Create("DPanel",menu)
+	local lootPnl = vgui.Create("DPanel",rEndMenu)
 	lootPnl:Dock(FILL)
 	lootPnl:DockPadding(24,24,24,24)
 
 	function lootPnl:Paint(w,h)
-		surface.SetDrawColor(Color(50,50,50,255))
+		surface.SetDrawColor(colors.winnerPnlBg)
 		surface.DrawRect(2,2,w - 4,h - 4)
 	end
 
@@ -95,8 +98,7 @@ function GM:DisplayEndRoundBoard(data)
 	table.sort(data.collectedLoot,function(a,b) return a.count > b.count end)
 
 	for _,v in pairs(data.collectedLoot) do
-		local col
-		if not v.playerName then continue end
+		if not v.realName then continue end
 		local pnl = vgui.Create("DPanel")
 		pnl:SetTall(draw.GetFontHeight("MersRadialSmall"))
 
@@ -119,18 +121,17 @@ function GM:DisplayEndRoundBoard(data)
 		pnl.NamePnl = name
 		name:Dock(LEFT)
 		name:SetAutoStretchVertical(true)
-		name:SetText(v.playerName)
+		name:SetText(v.realName)
 		name:SetFont("MersRadialSmall")
-		col = v.playerColor
-		name:SetTextColor(Color(col.x * 255,col.y * 255,col.z * 255))
+		name:SetTextColor(v.color)
 		name:SetContentAlignment(4)
 
 		function name:Paint()
 		end
 
 		function name:DoClick()
-			if IsValid(v.player) then
-				GAMEMODE:DoScoreboardActionPopup(v.player)
+			if IsValid(v.ent) then
+				GAMEMODE:DoScoreboardActionPopup(v.ent)
 			end
 		end
 
@@ -138,10 +139,9 @@ function GM:DisplayEndRoundBoard(data)
 		pnl.BNamePnl = bname
 		bname:Dock(LEFT)
 		bname:SetAutoStretchVertical(true)
-		bname:SetText(v.playerBystanderName)
+		bname:SetText(v.byName)
 		bname:SetFont("MersRadialSmall")
-		col = v.playerColor
-		bname:SetTextColor(Color(col.x * 255,col.y * 255,col.z * 255))
+		bname:SetTextColor(v.color)
 		bname:SetContentAlignment(4)
 
 		function bname:Paint()
@@ -152,15 +152,14 @@ function GM:DisplayEndRoundBoard(data)
 		pnl.CountPnl = count
 		count:Dock(FILL)
 		count:SetAutoStretchVertical(true)
-		count:SetText(tostring(v.count))
+		count:SetText(tostring(v.lootCount))
 		count:SetFont("MersRadialSmall")
-		col = v.playerColor
-		count:SetTextColor(Color(col.x * 255,col.y * 255,col.z * 255))
+		count:SetTextColor(v.color)
 		count.DoClick = count.DoClick
 		lootList:AddItem(pnl)
 	end
 
-	local add = vgui.Create("DButton",menu)
+	local add = vgui.Create("DButton",rEndMenu)
 	add:Dock(BOTTOM)
 	add:SetTall(64)
 	add:SetText("")
@@ -170,14 +169,14 @@ function GM:DisplayEndRoundBoard(data)
 		surface.SetMaterial(mat)
 
 		if self:IsDown() then
-			surface.SetDrawColor(180,180,180,255)
-			surface.SetTextColor(180,180,180,255)
+			surface.SetDrawColor(colors.menuIsDown)
+			surface.SetTextColor(colors.menuIsDown)
 		elseif self.Hovered then
-			surface.SetDrawColor(220,220,220,255)
-			surface.SetTextColor(220,220,220,255)
+			surface.SetDrawColor(colors.menuHovered)
+			surface.SetTextColor(colors.menuHovered)
 		else
-			surface.SetDrawColor(255,255,255,255)
-			surface.SetTextColor(255,255,255,255)
+			surface.SetDrawColor(colors.menuElse)
+			surface.SetTextColor(colors.menuElse)
 		end
 
 		local t = translate.adMelonbomberWhy
@@ -197,14 +196,14 @@ function GM:DisplayEndRoundBoard(data)
 end
 
 net.Receive("reopen_round_board",function()
-	if IsValid(menu) then
-		menu:SetVisible(true)
+	if IsValid(rEndMenu) then
+		rEndMenu:SetVisible(true)
 	end
 end)
 
 function GM:CloseEndRoundBoard()
-	if IsValid(menu) then
-		menu:Close()
+	if IsValid(rEndMenu) then
+		rEndMenu:Close()
 	end
 end
 

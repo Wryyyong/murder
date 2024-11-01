@@ -50,25 +50,36 @@ end)
 
 net.Receive("DeclareWinner",function()
 	local data = {}
+	local plyIdxBits = math.ceil(math.log(game.MaxPlayers(),2))
+
 	data.reason = net.ReadUInt(2)
-	data.murderer = net.ReadEntity()
-	data.murdererColor = net.ReadVector()
-	data.murdererName = net.ReadString()
-	-- if IsValid(data.murderer) then
-	-- end
+	data.murderer = {}
+
+	if net.ReadBool() then
+		data.murderer.ent = Entity(net.ReadUInt(plyIdxBits) + 1)
+		data.murderer.color = data.murderer:GetPlayerColor():ToColor()
+		data.murderer.byName = data.murderer:GetBystanderName()
+		data.murderer.realName = " (" .. data.murderer:GetName() .. ")"
+	else
+		data.murderer.ent = Entity(0)
+		data.murderer.color = color_white
+		data.murderer.byName = "unknown"
+		data.murderer.realName = ""
+	end
+
 	data.collectedLoot = {}
 
 	while net.ReadBool() do
 		local t = {}
-		t.player = net.ReadEntity()
+		t.ent = net.ReadEntity()
+		t.lootCount = net.ReadUInt(8)
 
-		if IsValid(t.player) then
-			t.playerName = t.player:Nick()
+		if IsValid(t.ent) then
+			t.color = t.ent:GetPlayerColor():ToColor()
+			t.byName = t.ent:GetBystanderName()
+			t.realName = t.ent:GetName()
 		end
 
-		t.count = net.ReadUInt(8)
-		t.playerColor = net.ReadVector()
-		t.playerBystanderName = net.ReadString()
 		table.insert(data.collectedLoot,t)
 	end
 
