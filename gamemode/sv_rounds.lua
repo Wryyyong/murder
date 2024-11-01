@@ -73,7 +73,7 @@ function GM:RoundThink()
 	local players = team.GetPlayers(2)
 
 	if self.RoundStage == self.Round.NotEnoughPlayers then
-		if #players > 1 and (not self.LastPlayerSpawn or self.LastPlayerSpawn + 1 < CurTime()) then
+		if #players >= self.MinimumPlayers:GetInt() and (not self.LastPlayerSpawn or self.LastPlayerSpawn + 1 < CurTime()) then
 			self.StartNewRoundTime = CurTime() + self.DelayAfterEnoughPlayers:GetFloat()
 			self:SetRound(self.Round.RoundStarting)
 		end

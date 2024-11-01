@@ -57,6 +57,8 @@ GM.AFKMoveToSpec = CreateConVar("mu_moveafktospectator",1,{FCVAR_ARCHIVE,FCVAR_N
 
 GM.RoundLimit = CreateConVar("mu_roundlimit",0,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Number of rounds we should play before map change",0)
 
+GM.MinimumPlayers = CreateConVar("mu_min_players",3,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Minimum amount of players required to start a round",2)
+
 GM.DelayAfterEnoughPlayers = CreateConVar("mu_delay_after_enough_players",10,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Time (in seconds) we should wait to start the round after enough players have joined",0)
 
 GM.FlashlightBattery = CreateConVar("mu_flashlight_battery",10,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"How long the flashlight should last in seconds (0 for infinite)",0)
