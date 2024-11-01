@@ -58,7 +58,7 @@ net.Receive("DeclareWinner",function()
 			t.playerName = t.player:Nick()
 		end
 
-		t.count = net.ReadUInt(32)
+		t.count = net.ReadUInt(8)
 		t.playerColor = net.ReadVector()
 		t.playerBystanderName = net.ReadString()
 		table.insert(data.collectedLoot,t)
@@ -67,15 +67,13 @@ net.Receive("DeclareWinner",function()
 	GAMEMODE:DisplayEndRoundBoard(data)
 	local pitch = math.random(80,120)
 
-	if IsValid(LocalPlayer()) then
-		LocalPlayer():EmitSound("ambient/alarms/warningbell1.wav",100,pitch)
-	end
+	LocalPlayer():EmitSound("ambient/alarms/warningbell1.wav",100,pitch)
 end)
 
 net.Receive("GrabLoot",function()
-	GAMEMODE.LootCollected = net.ReadUInt(32)
+	GAMEMODE.LootCollected = net.ReadUInt(8)
 end)
 
 net.Receive("SetLoot",function()
-	GAMEMODE.LootCollected = net.ReadUInt(32)
+	GAMEMODE.LootCollected = net.ReadUInt(8)
 end)

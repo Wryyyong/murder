@@ -124,7 +124,7 @@ local function giveMagnum(ply)
 end
 
 function GM:PlayerPickupLoot(ply,ent)
-	ply.LootCollected = ply.LootCollected + 1
+	ply.LootCollected = math.Clamp(ply.LootCollected + 1,0,255)
 
 	if not ply:GetMurderer() then
 		if ply.LootCollected == 5 then
@@ -139,7 +139,7 @@ function GM:PlayerPickupLoot(ply,ent)
 	ply:EmitSound("ambient/levels/canals/windchime2.wav",100,math.random(40,160))
 	ent:Remove()
 	net.Start("GrabLoot")
-	net.WriteUInt(ply.LootCollected,32)
+	net.WriteUInt(ply.LootCollected,8)
 	net.Send(ply)
 end
 
@@ -150,7 +150,7 @@ end
 function PlayerMeta:SetLootCollected(loot)
 	self.LootCollected = loot
 	net.Start("SetLoot")
-	net.WriteUInt(self.LootCollected,32)
+	net.WriteUInt(self.LootCollected,8)
 	net.Send(self)
 end
 
