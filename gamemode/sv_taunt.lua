@@ -13,7 +13,7 @@ function addTaunt(cat,soundFile,sex)
 	t.sound = soundFile
 	t.sex = sex
 	t.category = cat
-	table.insert(taunts[cat][sex],t)
+	taunts[cat][sex][#taunts[cat][sex] + 1] = t
 end
 
 -- male

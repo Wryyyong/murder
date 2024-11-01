@@ -10,7 +10,7 @@ function GM:FootstepsOnFootstep(ply,pos)
 
 	for _,plyr in ipairs(player.GetAll()) do
 		if self:CanSeeFootsteps(plyr) then
-			table.insert(tab,plyr)
+			tab[#tab + 1] = plyr
 		end
 	end
 

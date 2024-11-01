@@ -166,9 +166,9 @@ function Translator:AdvVarTranslate(phrase,replacements)
 				local rep = replacements[b] or "{" .. b .. "}"
 
 				if type(rep) == "function" then
-					table.insert(out,rep(b))
+					out[#out + 1] = rep(b)
 				elseif type(rep) == "table" then
-					table.insert(out,rep)
+					out[#out + 1] = rep
 				else
 					table.insert(out,{
 						text = rep

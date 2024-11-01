@@ -60,7 +60,7 @@ local function addModel(model,sex)
 	local t = {}
 	t.model = model
 	t.sex = sex
-	table.insert(playerModels,t)
+	playerModels[#playerModels + 1] = t
 end
 
 addModel("male03","male")
@@ -164,7 +164,7 @@ local function generateSpawnEntities(spawnList)
 		t.IsValid = isValid
 		t.GetPos = getPos
 		t.pos = pos
-		table.insert(tbl,t)
+		tbl[#tbl + 1] = t
 	end
 
 	return tbl

@@ -124,7 +124,7 @@ end)
 -- 		local entry = {}
 -- 		entry.ent = v
 -- 		entry.color = v:EntIndex() % 3
--- 		table.insert(t, entry)
+-- 		t[#t + 1] =  entry
 -- 	end
 -- 	Add(t, {Color(220, 0, 0), Color(0,220,0), Color(0,0,255)}, 5, 5, 5, true, false)
 -- end)

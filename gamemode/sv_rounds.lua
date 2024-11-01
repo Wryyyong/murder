@@ -141,7 +141,7 @@ function GM:RoundCheckForWin()
 
 	for _,v in ipairs(players) do
 		if v:Alive() and not v:GetMurderer() then
-			table.insert(survivors,v)
+			survivors[#survivors + 1] = v
 		end
 
 		if v:GetMurderer() then
@@ -489,7 +489,7 @@ function GM:LoadMapList()
 		local tbl = {}
 
 		for map in jason:gmatch("[^\r\n]+") do
-			table.insert(tbl,map)
+			tbl[#tbl + 1] = map
 		end
 
 		self.MapList = tbl
@@ -498,7 +498,7 @@ function GM:LoadMapList()
 
 		for _,map in ipairs(defaultMapList) do
 			if file.Exists("maps/" .. map .. ".bsp","GAME") then
-				table.insert(tbl,map)
+				tbl[#tbl + 1] = map
 			end
 		end
 

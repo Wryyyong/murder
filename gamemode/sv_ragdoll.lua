@@ -23,7 +23,7 @@ local function clearupRagdolls(ragdolls,max)
 					ragdolls[1]:Remove()
 				end
 
-				table.remove(ragdolls,1)
+				ragdolls[1] = nil
 				count = count - 1
 			else
 				break
@@ -62,8 +62,8 @@ function PlayerMeta:CreateRagdoll()
 	duplicator.DoGeneric(ent,data)
 	self:SetNWEntity("DeathRagdoll",ent)
 	ent:SetNWEntity("RagdollOwner",self)
-	table.insert(self.DeathRagdolls,ent)
-	table.insert(GAMEMODE.DeathRagdolls,ent)
+	self.DeathRagdolls[#self.DeathRagdolls + 1] = ent
+	GAMEMODE.DeathRagdolls[#GAMEMODE.DeathRagdolls + 1] = ent
 
 	if ent.SetPlayerColor then
 		ent:SetPlayerColor(self:GetPlayerColor())

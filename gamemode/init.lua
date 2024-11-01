@@ -12,7 +12,7 @@ for _,folder in ipairs(folders) do
 	end
 
 	for _,subfolder in ipairs(subfolders) do
-		table.insert(folders,folder .. subfolder .. "/")
+		folders[#folders + 1] = folder .. subfolder .. "/"
 	end
 end
 

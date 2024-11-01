@@ -4,7 +4,7 @@ local function addPart(name,sex)
 	local tab = {}
 	tab.name = name
 	tab.sex = sex
-	table.insert(GM.BystanderNameParts,tab)
+	GM.BystanderNameParts[#GM.BystanderNameParts + 1] = tab
 end
 
 -- Don't add to this list, add names to data/murder/bystander_name_parts.txt
@@ -53,14 +53,14 @@ function GM:AddBystanderNamePart(name,sex)
 	local tab = {}
 	tab.name = name
 	tab.sex = sex
-	table.insert(self.BystanderNameParts,tab)
+	self.BystanderNameParts[#self.BystanderNameParts + 1] = tab
 end
 
 -- removes a name to the bystander parts generation table
 function GM:RemoveBystanderNamePart(name,sex)
 	for k,v in ipairs(self.BystanderNameParts) do
 		if v.name == name and v.sex == sex then
-			table.remove(self.BystanderNameParts,k)
+			self.BystanderNameParts[k] = nil
 			break
 		end
 	end
@@ -80,7 +80,7 @@ function GM:GenerateName(words,sex)
 
 		for _,v in ipairs(self.BystanderNameParts) do
 			if v.sex == sex or v.sex == nil then
-				table.insert(tab,v.name)
+				tab[#tab + 1] = v.name
 			end
 		end
 
@@ -125,7 +125,7 @@ function GM:LoadBystanderNames()
 			local tab = {}
 			tab.name = name
 			tab.sex = sex
-			table.insert(tbl,tab)
+			tbl[#tbl + 1] = tab
 		end
 
 		self.BystanderNameParts = tbl

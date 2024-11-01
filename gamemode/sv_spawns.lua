@@ -92,7 +92,7 @@ concommand.Add("mu_spawn_add",function(ply,_,args)
 		return
 	end
 
-	table.insert(spawnList,ply:GetPos())
+	spawnList[#spawnList + 1] = ply:GetPos()
 	ply:ChatPrint("Added " .. #spawnList .. ": " .. getPosPrintString(ply:GetPos(),ply:GetPos()))
 	GAMEMODE:SaveSpawns()
 	networkChange(args[1])
@@ -206,7 +206,7 @@ concommand.Add("mu_spawn_remove",function(ply,_,args)
 	end
 
 	local pos = spawnList[key]
-	table.remove(spawnList,key)
+	spawnList[key] = nil
 	ply:ChatPrint("Remove " .. key .. ": " .. getPosPrintString(pos,ply:GetPos()))
 	GAMEMODE:SaveSpawns()
 	networkChange(args[1])

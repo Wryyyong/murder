@@ -101,7 +101,7 @@ function GM:AddLootItem(ent)
 	data.material = ent:GetMaterial()
 	data.pos = ent:GetPos()
 	data.angle = ent:GetAngles()
-	table.insert(LootItems,data)
+	LootItems[#LootItems + 1] = data
 end
 
 local function giveMagnum(ply)
@@ -185,7 +185,7 @@ concommand.Add("mu_loot_add",function(ply,_,args,_)
 	data.pos = ply:GetEyeTrace().HitPos
 	data.angle = ply:GetAngles() * 1
 	data.angle.p = 0
-	table.insert(LootItems,data)
+	LootItems[#LootItems + 1] = data
 	ply:ChatPrint("Added " .. #LootItems .. ": " .. getLootPrintString(data,ply:GetPos()))
 	GAMEMODE:SaveLootData()
 	local ent = GAMEMODE:SpawnLootItem(data)
@@ -257,7 +257,7 @@ concommand.Add("mu_loot_remove",function(ply,_,args)
 	end
 
 	local data = LootItems[key]
-	table.remove(LootItems,key)
+	LootItems[key] = nil
 	ply:ChatPrint("Remove " .. key .. ": " .. getLootPrintString(data,ply:GetPos()))
 	GAMEMODE:SaveLootData()
 end)

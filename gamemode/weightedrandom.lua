@@ -13,7 +13,7 @@ function WRandom:Add(weight,item)
 	local t = {}
 	t.weight = weight
 	t.item = item
-	table.insert(self.items,t)
+	self.items[#self.items + 1] = t
 end
 
 function WRandom:Roll()

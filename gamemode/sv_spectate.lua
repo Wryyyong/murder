@@ -50,7 +50,7 @@ function GM:SpectateNext(ply,direction)
 
 	for _,v in ipairs(team.GetPlayers(2)) do
 		if v:Alive() then
-			table.insert(players,v)
+			players[#players + 1] = v
 
 			if v == ply:GetCSpectatee() then
 				index = #players
