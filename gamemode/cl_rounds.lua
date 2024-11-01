@@ -17,6 +17,14 @@ function GM:GetRoundTime()
 	return CurTime() - started
 end
 
+sound.Add({
+	["channel"] = CHAN_AUTO,
+	["name"] = "StartRoundScream",
+	["level"] = 100,
+	["sound"] = "ambient/creatures/town_child_scream1.wav",
+	["pitch"] = {70,140}
+})
+
 net.Receive("SetRound",function()
 	local roundState = net.ReadUInt(3)
 	GAMEMODE.RoundStage = roundState
@@ -31,7 +39,7 @@ net.Receive("SetRound",function()
 			local pitch = math.random(70,140)
 
 			if IsValid(LocalPlayer()) then
-				LocalPlayer():EmitSound("ambient/creatures/town_child_scream1.wav",100,pitch)
+				LocalPlayer():EmitSound("StartRoundScream")
 			end
 		end)
 
