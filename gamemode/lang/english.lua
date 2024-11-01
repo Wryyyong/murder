@@ -61,12 +61,12 @@ pt.voiceMorose = "Morose"
 pt.voiceMoroseDescription = "Feel the sadness"
 pt.startHelpBystanderTitle = "You are a bystander"
 
-pt.startHelpBystander = {"There is a murderer on the loose","Don't get killed"}
+pt.startHelpBystander = {"There is a murderer on the loose","Search for clues to arm yourself","Don't get killed"}
 
 pt.startHelpGunTitle = "You are a bystander"
 pt.startHelpGunSubtitle = "with a secret weapon"
 
-pt.startHelpGun = {"There is a murderer on the loose","Find and kill him"}
+pt.startHelpGun = {"There is a murderer on the loose","Find and kill them"}
 
 pt.startHelpMurdererTitle = "You are the murderer"
 

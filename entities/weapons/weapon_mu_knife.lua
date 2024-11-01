@@ -82,6 +82,8 @@ end
 function SWEP:SetupDataTables()
 	self.BaseClass.SetupDataTables(self)
 	self:NetworkVar("Float",3,"FistHit")
+	self:NetworkVar("Float",4,"ChargeStart")
+	self:NetworkVar("Float",5,"ChargeAmount")
 end
 
 function SWEP:Holster()

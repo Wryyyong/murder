@@ -70,10 +70,11 @@ function GM:NetworkRound(ply)
 end
 
 function GM:RoundThink()
+	local minPlys = self.MinimumPlayers:GetInt()
 	local players = team.GetPlayers(2)
 
 	if self.RoundStage == self.Round.NotEnoughPlayers then
-		if #players >= self.MinimumPlayers:GetInt() and (not self.LastPlayerSpawn or self.LastPlayerSpawn + 1 < CurTime()) then
+		if #players >= minPlys and (not self.LastPlayerSpawn or self.LastPlayerSpawn + 1 < CurTime()) then
 			self.StartNewRoundTime = CurTime() + self.DelayAfterEnoughPlayers:GetFloat()
 			self:SetRound(self.Round.RoundStarting)
 		end
@@ -117,7 +118,7 @@ function GM:RoundThink()
 			self:StartNewRound()
 		end
 	elseif self.RoundStage == self.Round.RoundStarting then
-		if #players <= 1 then
+		if #players < minPlys then
 			self:SetRound(0)
 		elseif CurTime() >= self.StartNewRoundTime then
 			self:StartNewRound()

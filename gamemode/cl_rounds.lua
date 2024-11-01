@@ -37,6 +37,7 @@ net.Receive("SetRound",function()
 	if roundState == GAMEMODE.Round.Playing then
 		timer.Simple(0.2,function()
 			local lply = LocalPlayer()
+			if not IsValid(lply) then return end
 			lply:EmitSound("StartRoundScream")
 		end)
 
