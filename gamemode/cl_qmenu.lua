@@ -110,13 +110,11 @@ function GM:DrawRadialMenu()
 		end
 
 		surface.SetTexture(tex)
-		local defaultTextCol = color_white
 
-		if selected <= 0 or selected ~= selected then
+		if selected <= 0 then
 			surface.SetDrawColor(20,20,20,180)
 		else
 			surface.SetDrawColor(20,20,20,120)
-			defaultTextCol = Color(150,150,150)
 		end
 
 		surface.DrawPoly(circleVertex)
@@ -126,7 +124,7 @@ function GM:DrawRadialMenu()
 		for k,ment in pairs(ments) do
 			local x,y = math.cos((k - 1) / total * math.pi * 2 + math.pi * 1.5),math.sin((k - 1) / total * math.pi * 2 + math.pi * 1.5)
 			local lx,ly = math.cos((k - 1) / total * math.pi * 2 + add),math.sin((k - 1) / total * math.pi * 2 + add)
-			local textCol = defaultTextCol
+			local textCol
 
 			if selected == k then
 				local vertexes = prevSelectedVertex
@@ -169,6 +167,8 @@ function GM:DrawRadialMenu()
 				surface.SetDrawColor(20,120,255,120)
 				surface.DrawPoly(vertexes)
 				textCol = color_white
+			else
+				textCol = self.CommonColors["Team_Spectator"]
 			end
 
 			drawShadow(translate["voice" .. ment.TransCode],"MersRadial",sx + w * 0.6 * x,sy + h * 0.6 * y - fontHeight / 3,textCol,1)

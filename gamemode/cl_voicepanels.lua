@@ -6,7 +6,7 @@ function PANEL:Init()
 	self.LabelName:SetFont("GModNotify")
 	self.LabelName:Dock(FILL)
 	self.LabelName:DockMargin(8,0,0,0)
-	self.LabelName:SetTextColor(Color(255,255,255,255))
+	self.LabelName:SetTextColor(color_white)
 	self.Avatar = vgui.Create("AvatarImage",self)
 	self.Avatar:Dock(LEFT)
 	self.Avatar:SetSize(32,32)
@@ -16,8 +16,7 @@ function PANEL:Init()
 
 	function self.ColorBlock:Paint(w,h)
 		if IsValid(self.Player) and self.Player:IsPlayer() then
-			local col = self.Player:GetPlayerColor()
-			surface.SetDrawColor(Color(col.x * 255,col.y * 255,col.z * 255))
+			surface.SetDrawColor(self.Player:GetPlayerColor():ToColor())
 			surface.DrawRect(0,0,w,h)
 		end
 	end
@@ -38,43 +37,40 @@ function PANEL:Setup(ply)
 end
 
 function PANEL:CheckBystanderState()
-	if IsValid(self.ply) then
-		local newBystanderState = false
-		local client = LocalPlayer()
+	if not IsValid(self.ply) then return end
+	local newBystanderState = false
+	local client = LocalPlayer()
 
-		if not IsValid(client) then
+	if not IsValid(client) then
+		newBystanderState = true
+	else
+		if client:Team() == 2 and client:Alive() then
 			newBystanderState = true
 		else
-			if client:Team() == 2 and client:Alive() then
+			if self.ply:Team() == 2 and self.ply:Alive() then
 				newBystanderState = true
-			else
-				if self.ply:Team() == 2 and self.ply:Alive() then
-					newBystanderState = true
-				end
 			end
 		end
+	end
 
-		if self.Bystander ~= newBystanderState then
-			self:SetBystanderState(newBystanderState)
+	if self.Bystander ~= newBystanderState then
+		self:SetBystanderState(newBystanderState)
+	end
+
+	if newBystanderState then
+		local col = self.ply:GetPlayerColor():ToColor()
+
+		if col ~= self.PrevColor then
+			self.Color = col
+			self.LabelName:SetTextColor(col)
 		end
 
-		if newBystanderState then
-			local col = self.ply:GetPlayerColor()
-
-			if col ~= self.PrevColor then
-				local color = Color(col.x * 255,col.y * 255,col.z * 255)
-				self.Color = color
-				self.LabelName:SetTextColor(color)
-			end
-
-			self.PrevColor = col
-		end
+		self.PrevColor = col
 	end
 end
 
 function PANEL:SetBystanderState(state)
-	local col = self.ply:GetPlayerColor()
-	local color = Color(col.x * 255,col.y * 255,col.z * 255)
+	local color = self.ply:GetPlayerColor():ToColor()
 	self.Color = color
 	self.Bystander = state
 
@@ -103,9 +99,8 @@ end
 function PANEL:Think()
 	self:CheckBystanderState()
 
-	if self.fadeAnim then
-		self.fadeAnim:Run()
-	end
+	if not self.fadeAnim then return end
+	self.fadeAnim:Run()
 end
 
 function PANEL:FadeOut(anim,delta)

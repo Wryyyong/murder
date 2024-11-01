@@ -22,9 +22,9 @@ local function addPlayerItem(self,mlist,ply,pteam)
 		local showAdmins = GAMEMODE.ShowAdminsOnScoreboard:GetBool()
 
 		if IsValid(ply) and showAdmins and ply:IsAdmin() then
-			surface.SetDrawColor(Color(150,50,50))
+			surface.SetDrawColor(150,50,50)
 		else
-			surface.SetDrawColor(team.GetColor(pteam))
+			surface.SetDrawColor(team.GetColor(pteam):Unpack())
 		end
 
 		surface.DrawRect(0,0,w,h)
@@ -170,7 +170,7 @@ local function makeTeamList(parent,pteam)
 	pnl:DockPadding(8,8,8,8)
 
 	function pnl:Paint(w,h)
-		surface.SetDrawColor(Color(50,50,50,255))
+		surface.SetDrawColor(50,50,50)
 		surface.DrawRect(2,2,w - 4,h - 4)
 	end
 
@@ -277,7 +277,7 @@ function GM:ScoreboardShow()
 		end
 
 		function menu:Paint()
-			surface.SetDrawColor(Color(40,40,40,255))
+			surface.SetDrawColor(40,40,40)
 			surface.DrawRect(0,0,menu:GetWide(),menu:GetTall())
 		end
 

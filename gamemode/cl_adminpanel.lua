@@ -3,6 +3,8 @@ local playerData
 local talking = Material("icon32/unmuted.png")
 local muted = Material("icon32/muted.png")
 local admin = Material("icon32/wand.png")
+local PlayerDeadColor = GM.CommonColors["Team_Spectator"]
+local PlayerMurdererColor = GM.CommonColors["Team_Murderer"]
 
 local function addPlayerItem(self,mlist,ply,pteam)
 	local but = vgui.Create("DButton")
@@ -13,11 +15,12 @@ local function addPlayerItem(self,mlist,ply,pteam)
 
 	function but:Paint(w,h)
 		local showAdmins = GAMEMODE.ShowAdminsOnScoreboard:GetBool()
-		local col = team.GetColor(pteam)
+		local col
 
 		if IsValid(ply) then
-			col = ply:GetPlayerColor()
-			col = Color(col.x * 255,col.y * 255,col.z * 255)
+			col = ply:GetPlayerColor():ToColor()
+		else
+			col = team.GetColor(pteam)
 		end
 
 		surface.SetDrawColor(col)
@@ -62,10 +65,10 @@ local function addPlayerItem(self,mlist,ply,pteam)
 
 			if not ply:Alive() then
 				status = translate.playerStatusDead
-				statusColor = Color(120,120,120)
+				statusColor = PlayerDeadColor
 			elseif playerData and playerData.players[ply:EntIndex()] and playerData.players[ply:EntIndex()].murderer then
 				status = translate.murderer
-				statusColor = Color(190,20,20)
+				statusColor = PlayerMurdererColor
 			end
 
 			draw.DrawText(status,"ScoreboardPlayer",w * 0.64 + 1,9,color_black,0)
@@ -127,7 +130,7 @@ local function makeTeamList(parent,pteam)
 	pnl:DockPadding(8,8,8,8)
 
 	function pnl:Paint(w,h)
-		surface.SetDrawColor(Color(50,50,50,255))
+		surface.SetDrawColor(50,50,50,255)
 		surface.DrawRect(2,2,w - 4,h - 4)
 	end
 
@@ -246,7 +249,7 @@ concommand.Add("mu_adminpanel",function(client)
 		end
 
 		function menu:Paint()
-			surface.SetDrawColor(Color(40,40,40,255))
+			surface.SetDrawColor(40,40,40,255)
 			surface.DrawRect(0,0,menu:GetWide(),menu:GetTall())
 		end
 

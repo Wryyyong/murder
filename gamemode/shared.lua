@@ -13,9 +13,15 @@ GM.ShowAdminsOnScoreboard = CreateConVar("mu_scoreboard_show_admins",1,{FCVAR_AR
 GM.AdminPanelAllowed = CreateConVar("mu_allow_admin_panel",1,{FCVAR_ARCHIVE,FCVAR_REPLICATED},"Should allow admins to use mu_admin_panel",0,1)
 GM.ShowSpectateInfo = CreateConVar("mu_show_spectate_info",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY,FCVAR_REPLICATED},"Should show players name and color to spectators",0,1)
 
+GM.CommonColors = {
+	["Team_Bystander"] = Color(20,120,255),
+	["Team_Murderer"] = Color(190,20,20),
+	["Team_Spectator"] = Color(150,150,150)
+}
+
 function GM:SetupTeams()
-	team.SetUp(1,translate.teamSpectators,Color(150,150,150))
-	team.SetUp(2,translate.teamPlayers,Color(26,120,245))
+	team.SetUp(1,translate.teamSpectators,self.CommonColors["Team_Spectator"])
+	team.SetUp(2,translate.teamPlayers,self.CommonColors["Team_Bystander"])
 end
 
 GM:SetupTeams()

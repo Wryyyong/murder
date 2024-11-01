@@ -105,52 +105,50 @@ function GM:PostDrawTranslucentRenderables()
 	self:DrawFootprints()
 end
 
+local HaloColors = {Color(0,220,0),Color(220,0,0),Color(0,0,255)}
+
 function GM:PreDrawMurderHalos(Add)
 	local client = LocalPlayer()
+	if not (IsValid(client) and client:Alive() and self.HaloRender:GetBool()) then return end
 
-	if IsValid(client) and client:Alive() and self.HaloRender:GetBool() then
-		local halos = {}
+	local halos = {}
 
-		if self.HaloRenderLoot:GetBool() then
-			for _,v in pairs(ents.FindByClass("weapon_mu_magnum")) do
-				if not IsValid(v.Owner) then
-					table.insert(halos,{
-						ent = v,
-						color = 3
-					})
-				end
-			end
-
-			for _,v in pairs(ents.FindByClass("mu_loot")) do
-				table.insert(halos,{
-					ent = v,
-					color = 1
-				})
-			end
+	if self.HaloRenderLoot:GetBool() then
+		for _,v in pairs(ents.FindByClass("weapon_mu_magnum")) do
+			if IsValid(v.Owner) then continue end
+			table.insert(halos,{
+				ent = v,
+				color = 3
+			})
 		end
 
-		if self:GetAmMurderer() and self.HaloRenderKnife:GetBool() then
-			for _,v in pairs(ents.FindByClass("weapon_mu_knife")) do
-				if not IsValid(v.Owner) then
-					table.insert(halos,{
-						ent = v,
-						color = 2
-					})
-				end
-			end
-
-			for _,v in pairs(ents.FindByClass("mu_knife")) do
-				table.insert(halos,{
-					ent = v,
-					color = 2
-				})
-			end
-		end
-
-		if #halos > 0 then
-			Add(halos,{Color(0,220,0),Color(220,0,0),Color(0,0,255)},5,5,5,true,false)
+		for _,v in pairs(ents.FindByClass("mu_loot")) do
+			table.insert(halos,{
+				ent = v,
+				color = 1
+			})
 		end
 	end
+
+	if self:GetAmMurderer() and self.HaloRenderKnife:GetBool() then
+		for _,v in pairs(ents.FindByClass("weapon_mu_knife")) do
+			if IsValid(v.Owner) then continue end
+			table.insert(halos,{
+				ent = v,
+				color = 2
+			})
+		end
+
+		for _,v in pairs(ents.FindByClass("mu_knife")) do
+			table.insert(halos,{
+				ent = v,
+				color = 2
+			})
+		end
+	end
+
+	if #halos > 0 then return end
+	Add(halos,HaloColors,5,5,5,true,false)
 end
 
 net.Receive("mu_tker",function()

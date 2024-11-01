@@ -218,12 +218,10 @@ function GM:PlayerDeath(ply,_,attacker)
 				end
 			elseif attacker ~= ply then
 				if self.ShowBystanderTKs:GetBool() then
-					local col = attacker:GetPlayerColor()
-
 					local msgs = Translator:AdvVarTranslate(translate.killedTeamKill,{
 						player = {
 							text = attacker:GetBystanderName() .. " (" .. attacker:Nick() .. ")",
-							color = Color(col.x * 255,col.y * 255,col.z * 255)
+							color = attacker:GetPlayerColor():ToColor()
 						}
 					})
 
@@ -237,12 +235,10 @@ function GM:PlayerDeath(ply,_,attacker)
 		end
 	else
 		if attacker ~= ply and IsValid(attacker) and attacker:IsPlayer() then
-			local col = attacker:GetPlayerColor()
-
 			local msgs = Translator:AdvVarTranslate(translate.killedMurderer,{
 				player = {
 					text = attacker:GetBystanderName() .. " (" .. attacker:Nick() .. ")",
-					color = Color(col.x * 255,col.y * 255,col.z * 255)
+					color = attacker:GetPlayerColor():ToColor()
 				}
 			})
 
@@ -439,12 +435,11 @@ end
 function GM:PlayerSay(ply,text,say_team)
 	if ply:Team() == 2 and ply:Alive() and self:GetRound() ~= 0 then
 		local ct = ChatText()
-		local col = ply:GetPlayerColor()
-		ct:Add(ply:GetBystanderName(),Color(col.x * 255,col.y * 255,col.z * 255))
+		ct:Add(ply:GetBystanderName(),ply:GetPlayerColor():ToColor())
 		ct:Add(": " .. text,color_white)
 
 		for _,ply2 in pairs(player.GetAll()) do
-			local can = hook.Call("PlayerCanSeePlayersChat",GAMEMODE,text,say_team,ply2,ply)
+			local can = hook.Run("PlayerCanSeePlayersChat",text,say_team,ply2,ply)
 
 			if can then
 				ct:Send(ply2)

@@ -3,6 +3,7 @@ Translator = {}
 Translator.languages = {}
 Translator.language = "english"
 local rootFolder = (GM or GAMEMODE).Folder:sub(11) .. "/gamemode/"
+local ErrorColor = Color(255,50,50)
 
 function Translator:LoadLanguage(name,overridePath)
 	local tempG = {}
@@ -18,7 +19,7 @@ function Translator:LoadLanguage(name,overridePath)
 	if b then
 		Translator.languages[name] = tempG.pt
 	else
-		MsgC(Color(255,50,50),"Loading translation failed " .. name .. "\nError: " .. err .. "\n")
+		MsgC(ErrorColor,"Loading translation failed " .. name .. "\nError: " .. err .. "\n")
 	end
 end
 

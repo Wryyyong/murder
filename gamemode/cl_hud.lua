@@ -63,6 +63,7 @@ local function drawTextShadow(t,f,x,y,c,px,py)
 	color_black.a = 255
 end
 
+local SecretWeapon = Color(120,70,245)
 -- local healthCol = Color(120,255,20)
 function GM:HUDPaint()
 	local round = self:GetRound()
@@ -124,13 +125,15 @@ function GM:DrawStartRoundInformation()
 	local client = LocalPlayer()
 	local t1 = translate.startHelpBystanderTitle
 	local t2 = nil
-	local c = Color(20,120,255)
 	local desc = translate.table.startHelpBystander
+	local color
 
 	if self:GetAmMurderer() then
 		t1 = translate.startHelpMurdererTitle
 		desc = translate.table.startHelpMurderer
-		c = Color(190,20,20)
+		color = self.CommonColors["Team_Murderer"]
+	else
+		color = self.CommonColors["Team_Bystander"]
 	end
 
 	local hasMagnum = false
@@ -148,18 +151,18 @@ function GM:DrawStartRoundInformation()
 		desc = translate.table.startHelpGun
 	end
 
-	drawTextShadow(t1,"MersRadial",ScrW() / 2,ScrH() * 0.25,c,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+	drawTextShadow(t1,"MersRadial",ScrW() / 2,ScrH() * 0.25,color,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 
 	if t2 then
 		local h = draw.GetFontHeight("MersRadial")
-		drawTextShadow(t2,"MersRadialSmall",ScrW() / 2,ScrH() * 0.25 + h * 0.7,Color(120,70,245),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+		drawTextShadow(t2,"MersRadialSmall",ScrW() / 2,ScrH() * 0.25 + h * 0.7,SecretWeapon,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 	end
 
 	if desc then
 		local fontHeight = draw.GetFontHeight("MersRadialSmall")
 
 		for k,v in pairs(desc) do
-			drawTextShadow(v,"MersRadialSmall",ScrW() / 2,ScrH() * 0.75 + (k - 1) * fontHeight,c,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			drawTextShadow(v,"MersRadialSmall",ScrW() / 2,ScrH() * 0.75 + (k - 1) * fontHeight,color,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 	end
 end
@@ -178,80 +181,85 @@ local function colorDif(col1,col2)
 	return x + y + z
 end
 
+local FogAlertTextColor = Color(90,20,20)
+
 function GM:DrawGameHUD(ply)
 	if not IsValid(ply) then return end
 	local health = ply:Health()
-	if not IsValid(ply) then return end
-
-	if hook.Run("HUDShouldDraw","MurderMurdererFog") and LocalPlayer() == ply and ply:GetNWBool("MurdererFog") and self:GetAmMurderer() then
-		surface.SetDrawColor(10,10,10,50)
-		surface.DrawRect(-1,-1,ScrW() + 2,ScrH() + 2)
-		drawTextShadow(translate.murdererFog,"MersRadial",ScrW() * 0.5,ScrH() - 80,Color(90,20,20),1,TEXT_ALIGN_CENTER)
-		drawTextShadow(translate.murdererFogSub,"MersRadialSmall",ScrW() * 0.5,ScrH() - 50,Color(130,130,130),1,TEXT_ALIGN_CENTER)
-	end
 
 	-- surface.SetFont("MersRadial")
 	-- local w,h = surface.GetTextSize("Health")
 	-- drawTextShadow("Health", "MersRadial", 20, ScrH() - 10, healthCol, 0, TEXT_ALIGN_BOTTOM)
 	-- drawTextShadow(health, "MersRadialBig", 20 + w + 10, ScrH() - 10 + 3, healthCol, 0, TEXT_ALIGN_BOTTOM)
+
 	local tr = ply:GetEyeTraceNoCursor()
 
-	if hook.Run("HUDShouldDraw","MurderTraitorButton") and self:GetAmMurderer() then
-		-- find closest button to cursor with usable range
-		local dot,but
+	if self:GetAmMurderer() then
+		if hook.Run("HUDShouldDraw","MurderMurdererFog") and LocalPlayer() == ply and ply:GetNWBool("MurdererFog") then
+			surface.SetDrawColor(10,10,10,50)
+			surface.DrawRect(-1,-1,ScrW() + 2,ScrH() + 2)
+			drawTextShadow(translate.murdererFog,"MersRadial",ScrW() * 0.5,ScrH() - 80,FogAlertTextColor,1,TEXT_ALIGN_CENTER)
+			drawTextShadow(translate.murdererFogSub,"MersRadialSmall",ScrW() * 0.5,ScrH() - 50,FogAlertTextColor,1,TEXT_ALIGN_CENTER)
+		end
 
-		for _,lbut in pairs(ents.FindByClass("ttt_traitor_button")) do
-			local vec = lbut:GetPos() - ply:GetShootPos()
-			local ldis,ldot = vec:Length(),vec:GetNormal():Dot(ply:GetAimVector())
+		if hook.Run("HUDShouldDraw","MurderTraitorButton") then
+			-- find closest button to cursor with usable range
+			local dot,but
 
-			if (ldis < lbut:GetUsableRange() and ldot > 0.95) and (not but or ldot > dot) then
-				dis = ldis
-				dot = ldot
-				but = lbut
+			for _,lbut in pairs(ents.FindByClass("ttt_traitor_button")) do
+				local vec = lbut:GetPos() - ply:GetShootPos()
+				local ldis,ldot = vec:Length(),vec:GetNormal():Dot(ply:GetAimVector())
+
+				if (ldis < lbut:GetUsableRange() and ldot > 0.95) and (not but or ldot > dot) then
+					dis = ldis
+					dot = ldot
+					but = lbut
+				end
+			end
+
+			-- draw the friggen button with excessive text
+			if but then
+				local sp = but:GetPos():ToScreen()
+
+				if sp.visible then
+					--local sz = 16
+					local col = but:GetNextUseTime() > CurTime() and self.CommonColors["Team_Murderer"] or self.CommonColors["Team_Spectator"]
+
+					local ft,fh = draw.GetFontHeight("MersText1"),draw.GetFontHeight("MersHead1")
+					drawTextShadow(but:GetDescription(),"MersHead1",sp.x,sp.y,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+					local text
+
+					if but:GetNextUseTime() > CurTime() then
+						text = Translator:VarTranslate(translate.ttt_tbut_waittime,{
+							timesec = math.ceil(but:GetNextUseTime() - CurTime()) .. "s"
+						})
+					elseif but:GetDelay() < 0 then
+						text = translate.ttt_tbut_single
+					elseif but:GetDelay() == 0 then
+						text = translate.ttt_tbut_reuse
+					else
+						text = Translator:VarTranslate(translate.ttt_tbut_retime,{
+							num = but:GetDelay()
+						})
+					end
+
+					drawTextShadow(text,"MersText1",sp.x,sp.y + fh,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+					local key = input.LookupBinding("use")
+
+					if key and but:GetNextUseTime() <= CurTime() then
+						text = Translator:VarTranslate(translate.ttt_tbut_help,{
+							key = key:upper()
+						})
+
+						drawTextShadow(text,"MersText1",sp.x,sp.y + ft + fh,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+					end
+				end
 			end
 		end
 
-		-- draw the friggen button with excessive text
-		if but then
-			local sp = but:GetPos():ToScreen()
-
-			if sp.visible then
-				--local sz = 16
-				local col = Color(190,20,20)
-
-				if but:GetNextUseTime() > CurTime() then
-					col = Color(150,150,150)
-				end
-
-				local ft,fh = draw.GetFontHeight("MersText1"),draw.GetFontHeight("MersHead1")
-				drawTextShadow(but:GetDescription(),"MersHead1",sp.x,sp.y,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-				local text
-
-				if but:GetNextUseTime() > CurTime() then
-					text = Translator:VarTranslate(translate.ttt_tbut_waittime,{
-						timesec = math.ceil(but:GetNextUseTime() - CurTime()) .. "s"
-					})
-				elseif but:GetDelay() < 0 then
-					text = translate.ttt_tbut_single
-				elseif but:GetDelay() == 0 then
-					text = translate.ttt_tbut_reuse
-				else
-					text = Translator:VarTranslate(translate.ttt_tbut_retime,{
-						num = but:GetDelay()
-					})
-				end
-
-				drawTextShadow(text,"MersText1",sp.x,sp.y + fh,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-				local key = input.LookupBinding("use")
-
-				if key and but:GetNextUseTime() <= CurTime() then
-					text = Translator:VarTranslate(translate.ttt_tbut_help,{
-						key = key:upper()
-					})
-
-					drawTextShadow(text,"MersText1",sp.x,sp.y + ft + fh,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-				end
-			end
+		if hook.Run("HUDShouldDraw","MurderDisguise") and self.LootCollected and self.LootCollected >= 1 and IsValid(tr.Entity) and tr.Entity:GetClass() == "prop_ragdoll" and tr.HitPos:Distance(tr.StartPos) < 80 and (tr.Entity:GetBystanderName() ~= ply:GetBystanderName() or colorDif(tr.Entity:GetPlayerColor(),ply:GetPlayerColor()) > 0.1) then
+			local h = draw.GetFontHeight("MersRadial")
+			drawTextShadow(translate.pressEToDisguiseFor1Loot,"MersRadialSmall",ScrW() / 2,ScrH() / 2 + 80 + h * 0.7,color_white,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 	end
 
@@ -264,16 +272,10 @@ function GM:DrawGameHUD(ply)
 
 		if IsValid(self.LastLooked) and self.LookedFade + 2 > CurTime() then
 			local name = self.LastLooked:GetBystanderName() or "error"
-			local col = self.LastLooked:GetPlayerColor() or Vector()
-			col = Color(col.x * 255,col.y * 255,col.z * 255)
+			local col = self.LastLooked:GetPlayerColor():ToColor()
 			col.a = (1 - (CurTime() - self.LookedFade) / 2) * 255
 			drawTextShadow(name,"MersRadial",ScrW() / 2,ScrH() / 2 + 80,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
-	end
-
-	if hook.Run("HUDShouldDraw","MurderDisguise") and self:GetAmMurderer() and self.LootCollected and self.LootCollected >= 1 and IsValid(tr.Entity) and tr.Entity:GetClass() == "prop_ragdoll" and tr.HitPos:Distance(tr.StartPos) < 80 and (tr.Entity:GetBystanderName() ~= ply:GetBystanderName() or colorDif(tr.Entity:GetPlayerColor(),ply:GetPlayerColor()) > 0.1) then
-		local h = draw.GetFontHeight("MersRadial")
-		drawTextShadow(translate.pressEToDisguiseFor1Loot,"MersRadialSmall",ScrW() / 2,ScrH() / 2 + 80 + h * 0.7,color_white,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 	end
 
 	if hook.Run("HUDShouldDraw","MurderHealthBall") then
@@ -285,8 +287,7 @@ function GM:DrawGameHUD(ply)
 		surface.DrawTexturedRect(size * 0.1,ScrH() - size * 1.1,size,size)
 		-- draw health circle
 		surface.SetTexture(tex)
-		local col = ply:GetPlayerColor()
-		col = Color(col.x * 255,col.y * 255,col.z * 255)
+		local col = ply:GetPlayerColor():ToColor()
 		surface.SetDrawColor(col)
 		local hsize = math.Clamp(health,0,100) / 100 * size
 		surface.DrawTexturedRect(size * 0.1 + (size - hsize) / 2,ScrH() - size * 1.1 + (size - hsize) / 2,hsize,hsize)
@@ -331,11 +332,11 @@ function GM:DrawGameHUD(ply)
 
 	if hook.Run("HUDShouldDraw","MurderPlayerType") then
 		local name = translate.bystander
-		local color = Color(20,120,255)
+		local color = self.CommonColors["Team_Bystander"]
 
 		if LocalPlayer() == ply and self:GetAmMurderer() then
 			name = translate.murderer
-			color = Color(190,20,20)
+			color = self.CommonColors["Team_Murderer"]
 		end
 
 		drawTextShadow(name,"MersRadial",ScrW() - 20,ScrH() - 10,color,2,TEXT_ALIGN_BOTTOM)
@@ -370,7 +371,7 @@ function GM:DrawGameHUD(ply)
 				font = "TimerText"
 			end
 
-			drawTextShadow(s,font,ScrW() - 20,10,Color(190,20,20),TEXT_ALIGN_RIGHT,TEXT_ALIGN_TOP)
+			drawTextShadow(s,font,ScrW() - 20,10,self.CommonColors["Team_Murderer"],TEXT_ALIGN_RIGHT,TEXT_ALIGN_TOP)
 		end
 	end
 end

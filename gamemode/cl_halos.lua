@@ -5,7 +5,7 @@ local rt_Store = render.GetScreenEffectTexture(0)
 local rt_Blur = render.GetScreenEffectTexture(1)
 local List = {}
 
-local function Add(ents,colors,blurx,blury,passes,add,ignorez)
+local function Add(entTable,colors,blurx,blury,passes,add,ignorez)
 	if add == nil then
 		add = true
 	end
@@ -15,7 +15,7 @@ local function Add(ents,colors,blurx,blury,passes,add,ignorez)
 	end
 
 	local t = {
-		Ents = ents,
+		Ents = entTable,
 		Colors = colors,
 		Hidden = when_hidden,
 		BlurX = blurx or 2,

@@ -1,5 +1,5 @@
 GM.Spawns = {}
-local color_black,color_green = Color(0,0,0),Color(0,150,0)
+local color_green = Color(0,150,0)
 
 function GM:DrawSpawnsVisualise()
 	if not self.SpawnsVisualise then return end

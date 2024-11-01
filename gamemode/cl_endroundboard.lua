@@ -1,11 +1,11 @@
 local rEndMenu
 
-local colors = {}
-colors.menuBg = Color(40,40,40,255)
-colors.winnerPnlBg = Color(50,50,50,255)
-colors.menuIsDown = Color(180,180,180,255)
-colors.menuHovered = Color(220,220,220,255)
-colors.menuElse = Color(255,255,255,255)
+local colors = {
+	["menuBg"] = Color(40,40,40),
+	["menuIsDown"] = Color(180,180,180),
+	["menuHovered"] = Color(220,220,220),
+	["winnerPnlBg"] = Color(50,50,50)
+}
 
 function GM:DisplayEndRoundBoard(data)
 	if IsValid(rEndMenu) then
@@ -45,13 +45,13 @@ function GM:DisplayEndRoundBoard(data)
 
 	if data.reason == 3 then
 		winner:SetText(translate.endroundMurdererQuit)
-		winner:SetTextColor(Color(255,255,255))
+		winner:SetTextColor(color_white)
 	elseif data.reason == 2 then
 		winner:SetText(translate.endroundBystandersWin)
-		winner:SetTextColor(Color(20,120,255))
+		winner:SetTextColor(self.CommonColors["Team_Bystander"])
 	elseif data.reason == 1 then
 		winner:SetText(translate.endroundMurdererWins)
-		winner:SetTextColor(Color(190,20,20))
+		winner:SetTextColor(self.CommonColors["Team_Murderer"])
 	end
 
 	local murdererPnl = vgui.Create("DPanel",winnerPnl)
@@ -175,8 +175,8 @@ function GM:DisplayEndRoundBoard(data)
 			surface.SetDrawColor(colors.menuHovered)
 			surface.SetTextColor(colors.menuHovered)
 		else
-			surface.SetDrawColor(colors.menuElse)
-			surface.SetTextColor(colors.menuElse)
+			surface.SetDrawColor(color_white)
+			surface.SetTextColor(color_white)
 		end
 
 		local t = translate.adMelonbomberWhy

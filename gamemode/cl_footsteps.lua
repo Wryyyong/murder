@@ -14,19 +14,21 @@ local footMat = Material("thieves/footprint")
 -- local CircleMat = Material( "Decals/burn02a" )
 local maxDistance = 600 ^ 2
 
-local function renderfoot(self)
+local function renderfoot(gmTbl)
+	if #FootSteps == 0 then return end
+
 	cam.Start3D(EyePos(),EyeAngles())
 	render.SetMaterial(footMat)
 	-- local pos = EyePos()
-	local lifeTime = math.Clamp(self.FootstepMaxLifeTime:GetInt(),0,30)
+	local lifeTime = math.Clamp(gmTbl.FootstepMaxLifeTime:GetInt(),0,30)
 
-	for k,footstep in pairs(FootSteps) do
+	for idx,footstep in pairs(FootSteps) do
 		if footstep.curtime + lifeTime > CurTime() then
 			if (footstep.pos - EyePos()):LengthSqr() < maxDistance then
 				render.DrawQuadEasy(footstep.pos + footstep.normal * 0.01,footstep.normal,10,20,footstep.col,footstep.angle)
 			end
 		else
-			FootSteps[k] = nil
+			FootSteps[idx] = nil
 		end
 	end
 
@@ -36,11 +38,11 @@ end
 function GM:DrawFootprints()
 	local errored,retval = pcall(renderfoot,self)
 
-	if not errored then
-		ErrorNoHalt(retval)
-	end
+	if errored then return end
+	ErrorNoHalt(retval)
 end
 
+local TraceVectorStart = Vector(0,0,-10)
 function GM:AddFootstep(ply,pos,ang,foot)
 	ang.p = 0
 	ang.r = 0
@@ -53,24 +55,24 @@ function GM:AddFootstep(ply,pos,ang,foot)
 	end
 
 	ply.LastFoot = not ply.LastFoot
-	local trace = {}
-	trace.start = fpos
-	trace.endpos = trace.start + Vector(0,0,-10)
-	trace.filter = ply
-	local tr = util.TraceLine(trace)
+	local tr = util.TraceLine({
+		["start"] = fpos,
+		["endpos"] = fpos + TraceVectorStart,
+		["filter"] = ply
+	})
 
-	if tr.Hit then
-		local tbl = {}
-		tbl.pos = tr.HitPos
-		tbl.plypos = fpos
-		tbl.foot = foot
-		tbl.curtime = CurTime()
-		tbl.angle = ang.y
-		tbl.normal = tr.HitNormal
-		local col = ply:GetPlayerColor()
-		tbl.col = Color(col.x * 255,col.y * 255,col.z * 255)
-		table.insert(FootSteps,tbl)
-	end
+	if not tr.Hit then return end
+
+	local tbl = {
+		["pos"] = tr.HitPos,
+		["plypos"] = fpos,
+		["foot"] = foot,
+		["curtime"] = CurTime(),
+		["angle"] = ang.y,
+		["normal"] = tr.HitNormal,
+		["col"] = ply:GetPlayerColor():ToColor()
+	}
+	FootSteps[#FootSteps + 1] = tbl
 end
 
 function GM:FootStepsFootstep(ply,pos,foot,snd,volume,filter)
@@ -86,7 +88,7 @@ function GM:CanSeeFootsteps()
 end
 
 function GM:ClearFootsteps()
-	table.Empty(FootSteps)
+	FootSteps = {}
 end
 
 net.Receive("add_footstep",function()

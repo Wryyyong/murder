@@ -2,17 +2,25 @@ if SERVER then
 	util.AddNetworkString("mu_knife_charge")
 	SWEP.KnifeChargeConvar = CreateConVar("mu_knife_charge",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Should we use a charge bar on alt attack?",0,1)
 else
-	killicon.AddFont("weapon_mu_knife","HL2MPTypeDeath","5",Color(0,0,255,255))
+	killicon.AddFont("weapon_mu_knife","HL2MPTypeDeath","5",Color(0,0,255))
 
+	local KnifeTextColor = Color(255,150,0)
+	local KnifeHeaderColor = Color(255,50,50)
 	function SWEP:DrawWeaponSelection(x,y,w,h,alpha)
 		local name = translate and translate.knife or "Knife"
+		local nameTrim1 = name:sub(2)
+		local nameTrim2 = name:sub(1,1)
+
 		surface.SetFont("MersText1")
-		local tw = surface.GetTextSize(name:sub(2))
+		local tw = surface.GetTextSize(nameTrim1)
 		surface.SetFont("MersHead1")
-		local twf = surface.GetTextSize(name:sub(1,1))
+		local twf = surface.GetTextSize(nameTrim2)
 		tw = tw + twf + 1
-		draw.DrawText(name:sub(2),"MersText1",x + w * 0.5 - tw / 2 + twf + 1,y + h * 0.51,Color(255,150,0,alpha),0)
-		draw.DrawText(name:sub(1,1),"MersHead1",x + w * 0.5 - tw / 2,y + h * 0.49,Color(255,50,50,alpha),0)
+
+		KnifeTextColor.a = alpha
+		KnifeHeaderColor.a = alpha
+		draw.DrawText(nameTrim1,"MersText1",x + w * 0.5 - tw / 2 + twf + 1,y + h * 0.51,KnifeTextColor,0)
+		draw.DrawText(nameTrim2,"MersHead1",x + w * 0.5 - tw / 2,y + h * 0.49,KnifeHeaderColor,0)
 	end
 
 	function SWEP:DrawHUD()

@@ -200,50 +200,42 @@ function GM:EndTheRound(reason,murderer)
 
 	if reason == 3 then
 		if murderer then
-			local col = murderer:GetPlayerColor()
-
 			local msgs = Translator:AdvVarTranslate(translate.murdererDisconnectKnown,{
 				murderer = {
 					text = murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")",
-					color = Color(col.x * 255,col.y * 255,col.z * 255)
+					color = murderer:GetPlayerColor():ToColor()
 				}
 			})
 
 			local ct = ChatText(msgs)
 			ct:SendAll()
-			-- ct:Add(", it was ")
-			-- ct:Add(murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")", Color(col.x * 255, col.y * 255, col.z * 255))
 		else
 			local ct = ChatText()
 			ct:Add(translate.murdererDisconnect)
 			ct:SendAll()
 		end
 	elseif reason == 2 then
-		local col = murderer:GetPlayerColor()
-
 		local msgs = Translator:AdvVarTranslate(translate.winBystandersMurdererWas,{
 			murderer = {
 				text = murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")",
-				color = Color(col.x * 255,col.y * 255,col.z * 255)
+				color = murderer:GetPlayerColor():ToColor()
 			}
 		})
 
 		local ct = ChatText()
-		ct:Add(translate.winBystanders,Color(20,120,255))
+		ct:Add(translate.winBystanders,self.CommonColors["Team_Bystander"])
 		ct:AddParts(msgs)
 		ct:SendAll()
 	elseif reason == 1 then
-		local col = murderer:GetPlayerColor()
-
 		local msgs = Translator:AdvVarTranslate(translate.winMurdererMurdererWas,{
 			murderer = {
 				text = murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")",
-				color = Color(col.x * 255,col.y * 255,col.z * 255)
+				color = murderer:GetPlayerColor():ToColor()
 			}
 		})
 
 		local ct = ChatText()
-		ct:Add(translate.winMurderer,Color(190,20,20))
+		ct:Add(translate.winMurderer,self.CommonColors["Team_Murderer"])
 		ct:AddParts(msgs)
 		ct:SendAll()
 	end
@@ -273,12 +265,10 @@ function GM:EndTheRound(reason,murderer)
 			local oldTeam = ply:Team()
 			ply:SetTeam(1)
 			GAMEMODE:PlayerOnChangeTeam(ply,1,oldTeam)
-			local col = ply:GetPlayerColor()
-
 			local msgs = Translator:AdvVarTranslate(translate.teamMovedAFK,{
 				player = {
 					text = ply:Nick(),
-					color = Color(col.x * 255,col.y * 255,col.z * 255)
+					color = ply:GetPlayerColor():ToColor()
 				},
 				team = {
 					text = team.GetName(1),
@@ -314,12 +304,13 @@ function GM:EndTheRound(reason,murderer)
 	self:SetRound(2)
 end
 
+local NotEnoughPlayersColor = Color(255,150,50)
 function GM:StartNewRound()
 	local players = team.GetPlayers(2)
 
 	if #players <= 1 then
 		local ct = ChatText()
-		ct:Add(translate.minimumPlayers,Color(255,150,50))
+		ct:Add(translate.minimumPlayers,NotEnoughPlayersColor)
 		ct:SendAll()
 		self:SetRound(self.Round.NotEnoughPlayers)
 
