@@ -363,11 +363,7 @@ function GM:StartNewRound()
 		ply:KillSilent()
 		ply:Spawn()
 		ply:Freeze(true)
-		local vec = Vector(0,0,0)
-		vec.x = math.Rand(0,1)
-		vec.y = math.Rand(0,1)
-		vec.z = math.Rand(0,1)
-		ply:SetPlayerColor(vec)
+		ply:SetPlayerColor(Vector(math.Rand(0,1),math.Rand(0,1),math.Rand(0,1)))
 		ply.LootCollected = 0
 		ply.HasMoved = false
 		ply.Frozen = true
@@ -376,9 +372,9 @@ function GM:StartNewRound()
 		ply:GenerateBystanderName()
 	end
 
-	local noobs = table.Copy(players)
-	table.RemoveByValue(noobs,murderer)
-	local magnum = table.Random(noobs)
+	local bystanders = table.Copy(players)
+	table.RemoveByValue(bystanders,murderer)
+	local magnum = bystanders[math.random(1,#bystanders)]
 
 	if IsValid(magnum) then
 		magnum:Give("weapon_mu_magnum")

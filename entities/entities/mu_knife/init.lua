@@ -3,7 +3,7 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-	self:SetModel("models/weapons/w_knife_t.mdl")
+	self:SetModel(self.KnifeModel)
 	self:PhysicsInit(SOLID_VPHYSICS)
 	-- self:PhysicsInitSphere(50)
 	self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -27,7 +27,7 @@ function ENT:Use()
 end
 
 function ENT:Think()
-	if self.RemoveNext and IsValid(self) then
+	if IsValid(self) and self.RemoveNext then
 		self.RemoveNext = false
 		self:Remove()
 	end
@@ -51,27 +51,26 @@ function ENT:Think()
 	return true
 end
 
-local function addangle(ang,ang2)
-	ang:RotateAroundAxis(ang:Up(),ang2.y) -- yaw
-	ang:RotateAroundAxis(ang:Forward(),ang2.r) -- roll
-	ang:RotateAroundAxis(ang:Right(),ang2.p) -- pitch
+local function AddAngle(targetAng,addAng)
+	targetAng:RotateAroundAxis(targetAng:Up(),addAng[2]) -- yaw
+	targetAng:RotateAroundAxis(targetAng:Forward(),addAng[3]) -- roll
+	targetAng:RotateAroundAxis(targetAng:Right(),addAng[1]) -- pitch
 end
 
+local CollideAngle,RagdollAngle = Angle(-60,0,0),Angle(30,-90,0)
 function ENT:PhysicsCollide(data)
-	-- print(data.OurOldVelocity:Length())
-	if self.HitSomething then return end
-	if self.RemoveNext then return end
+	if self.HitSomething or self.RemoveNext then return end
 	local ply = data.HitEntity
 
 	if IsValid(ply) and ply:IsPlayer() then
-		-- self.RemoveNext = true
-		-- self:SetColor(Color(0,0,0,0))
 		local dmg = DamageInfo()
 		dmg:SetDamage(120)
 		dmg:SetAttacker(self:GetOwner())
 		ply:TakeDamageInfo(dmg)
 		self:EmitSound("physics/flesh/flesh_squishy_impact_hard" .. math.random(1,4) .. ".wav")
-		addangle(ply:GetAngles() * 1,Angle(-60,0,0))
+		local newPlyAng = ply:GetAngles()
+		AddAngle(newPlyAng,CollideAngle)
+		ply:SetEyeAngles(newPlyAng)
 
 		timer.Simple(0,function()
 			local rag = ply:GetRagdollEntity()
@@ -80,20 +79,10 @@ function ENT:PhysicsCollide(data)
 				local pos,ang = rag:GetBonePosition(0)
 				local vec = Vector(0,16,-14)
 				vec:Rotate(ang)
-				pos = pos + vec
-				addangle(ang,Angle(30,-90,0))
-				-- local knife = ents.Create("prop_physics")
-				-- knife:SetModel("models/weapons/w_knife_t.mdl")
-				-- knife:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-				-- knife:SetPos(pos)
-				-- knife:SetAngles(ang)
-				-- knife:Spawn()
-				-- local phys = knife:GetPhysicsObject()
-				-- if IsValid(phys) then
-				-- 	phys:EnableCollisions(false)
-				-- end
-				-- constraint.Weld(rag, knife, 0, 0, 0, true)
-				-- rag:CallOnRemove("knife_cleanup", function() SafeRemoveEntity(knife) end)
+				pos:Add(vec)
+				AddAngle(ang,RagdollAngle)
+				rag:SetPos(pos)
+				rag:SetAngles(ang)
 			end
 		end)
 	end

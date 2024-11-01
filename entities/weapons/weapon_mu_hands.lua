@@ -17,26 +17,21 @@ SWEP.SequenceIdle = "fists_idle_01"
 SWEP.PrintName = translate and translate.hands or "Hands"
 
 function SWEP:Initialize()
-	self.PrintName = translate and translate.hands or "Hands"
 	self.BaseClass.Initialize(self)
+	self.PrintName = translate and translate.hands or "Hands"
 end
 
 function SWEP:DoPrimaryAttackEffect()
 end
 
-local function addangle(ang,ang2)
-	ang:RotateAroundAxis(ang:Up(),ang2.y) -- yaw
-	ang:RotateAroundAxis(ang:Forward(),ang2.r) -- roll
-	ang:RotateAroundAxis(ang:Right(),ang2.p) -- pitch
-end
-
+local BasePos,BaseAng = Vector(-35,0,0),Angle(-90,0,0)
 function SWEP:CalcViewModelView(_,_,_,pos,ang)
 	-- iron sights
-	local pos2 = Vector(-35,0,0)
-	addangle(ang,Angle(-90,0,0))
-	pos2:Rotate(ang)
+	self:AddAngle(ang,BaseAng)
+	pos:Rotate(ang)
+	pos:Add(BasePos)
 
-	return pos + pos2,ang
+	return pos,ang
 end
 
 local pickupWhiteList = {
@@ -48,8 +43,7 @@ local pickupWhiteList = {
 if SERVER then
 	function SWEP:CanPickup(ent)
 		if ent:IsWeapon() or ent:IsPlayer() or ent:IsNPC() then return false end
-		local class = ent:GetClass()
-		if pickupWhiteList[class] then return true end
+		if pickupWhiteList[ent:GetClass()] then return true end
 
 		return false
 	end

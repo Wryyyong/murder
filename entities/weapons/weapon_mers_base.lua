@@ -23,28 +23,28 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
+local STATE_HOLSTER,STATE_IDLE = 0,1
 
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType or "normal")
-	self:SetWeaponState("holster")
+	self:SetWeaponState(STATE_HOLSTER)
 	self.IronsightsPercent = 0
 end
 
 function SWEP:SetupDataTables()
-	self:NetworkVar("String",0,"WeaponState")
+	self:NetworkVar("Int",0,"WeaponState")
 	self:NetworkVar("Float",0,"ReloadEnd")
 	self:NetworkVar("Float",1,"NextIdle")
 	self:NetworkVar("Float",2,"DrawEnd")
 end
 
 function SWEP:IsIdle()
-	if
-		(self:GetReloadEnd() > 0 and self:GetReloadEnd() >= CurTime()) or
-		(self:GetNextPrimaryFire() > 0 and self:GetNextPrimaryFire() >= CurTime()) or
-		(self:GetDrawEnd() > 0 and self:GetDrawEnd() >= CurTime())
-	then return false end
+	local CurrentTime = CurTime()
+	local ReloadEnd = self:GetReloadEnd()
+	local NextPrimaryFire = self:GetNextPrimaryFire()
+	local DrawEnd = self:GetDrawEnd()
 
-	return true
+	return not ((ReloadEnd > 0 and ReloadEnd >= CurrentTime) or (NextPrimaryFire > 0 and NextPrimaryFire >= CurrentTime) or (DrawEnd > 0 and DrawEnd >= CurrentTime))
 end
 
 function SWEP:PrimaryAttack()
@@ -122,10 +122,8 @@ end
 function SWEP:SecondaryAttack()
 end
 
-local function lerp(from,to,step)
-	if from < to then return math.min(from + step,to) end
-
-	return math.max(from - step,to)
+local function CustomLerp(from,to,step)
+	return from < to and math.min(from + step,to) or math.max(from - step,to)
 end
 
 function SWEP:Think()
@@ -161,16 +159,16 @@ function SWEP:Think()
 
 		self.UsingIronsights = false
 
-		if owner:KeyDown(IN_ATTACK2) and self:GetWeaponState() ~= "holster" then
+		if owner:KeyDown(IN_ATTACK2) and self:GetWeaponState() ~= STATE_HOLSTER then
 			self.UsingIronsights = true
 		end
 	end
 
-	self.IronsightsPercent = lerp(self.IronsightsPercent,self.UsingIronsights and 1 or 0,FrameTime() * 2.5)
+	self.IronsightsPercent = CustomLerp(self.IronsightsPercent,self.UsingIronsights and 1 or 0,FrameTime() * 2.5)
 end
 
 function SWEP:Reload()
-	if self:IsIdle() and self:GetWeaponState() == "normal" and self:GetMaxClip1() > 0 and self:Clip1() < self:GetMaxClip1() then
+	if self:IsIdle() and self:GetWeaponState() == STATE_IDLE and self:GetMaxClip1() > 0 and self:Clip1() < self:GetMaxClip1() then
 		local owner = self:GetOwner()
 		local spare = owner:GetAmmoCount(self:GetPrimaryAmmoType())
 
@@ -190,7 +188,7 @@ function SWEP:Reload()
 end
 
 function SWEP:Deploy()
-	self:SetWeaponState("normal")
+	self:SetWeaponState(STATE_IDLE)
 	local time = 1
 	local vm = self:GetOwner():GetViewModel()
 
@@ -210,39 +208,41 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
-	self:SetWeaponState("holster")
+	self:SetWeaponState(STATE_HOLSTER)
 
 	return true
 end
 
-local function ease(t)
-	if t < .5 then
-		return 2 * t * t
-	else
-		return -1 + (4 - 2 * t) * t
-	end
+local function Ease(val)
+	return val < .5 and 2 * val ^ 2 or -1 + (4 - 2 * val) * val
 end
 
-local function addangle(ang,ang2)
-	ang:RotateAroundAxis(ang:Up(),ang2.y) -- yaw
-	ang:RotateAroundAxis(ang:Forward(),ang2.r) -- roll
-	ang:RotateAroundAxis(ang:Right(),ang2.p) -- pitch
+local function AddAngle(_,targetAng,addAng)
+	targetAng:RotateAroundAxis(targetAng:Up(),addAng[2]) -- yaw
+	targetAng:RotateAroundAxis(targetAng:Forward(),addAng[3]) -- roll
+	targetAng:RotateAroundAxis(targetAng:Right(),addAng[1]) -- pitch
 end
+SWEP.AddAngle = AddAngle
 
+-- iron sights
 function SWEP:CalcViewModelView(_,_,_,pos,ang)
-	-- iron sights
-	local addpos,addang = Vector(0,0,0),Angle(0,0,0)
-
+	local sPos,sAng
 	if self.Ironsights then
-		addpos = self.Ironsights.Pos or addpos
-		addang = self.Ironsights.Angle or addang
+		sPos = self.Ironsights.Pos
+		sAng = self.Ironsights.Angle
+	else
+		sPos = Vector(0,0,0)
+		sAng = Angle(0,0,0)
 	end
 
-	local pos2 = addpos * ease(self.IronsightsPercent)
-	addangle(ang,addang * ease(self.IronsightsPercent))
-	pos2:Rotate(ang)
+	local EasedPerc = Ease(self.IronsightsPercent)
+	sAng:Mul(EasedPerc)
+	self:AddAngle(ang,sAng)
+	sPos:Mul(EasedPerc)
+	sPos:Rotate(ang)
+	pos:Add(sPos)
 
-	return pos + pos2,ang
+	return pos,ang
 end
 
 function SWEP:OnRemove()

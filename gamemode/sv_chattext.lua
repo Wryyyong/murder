@@ -2,24 +2,24 @@ util.AddNetworkString("chattext_msg")
 local meta = {}
 meta.__index = meta
 
-function meta:Add(string,color)
+function meta:Add(instring,color)
 	local t = {}
-	t.text = string
+	t.text = instring
 	t.color = color or self.default_color or color_white
-	table.insert(self.msgs,t)
+	self.msgs[#self.msgs + 1] = t
 
 	return self
 end
 
 function meta:AddPart(msg)
-	table.insert(self.msgs,msg)
+	self.msgs[#self.msgs + 1] = msg
 
 	return self
 end
 
 function meta:AddParts(msgs)
 	for _,msg in pairs(msgs) do
-		table.insert(self.msgs,msg)
+		self.msgs[#self.msgs + 1] = msg
 	end
 
 	return self
@@ -57,11 +57,14 @@ function meta:NetConstructMsg()
 		net.WriteBool(true)
 		net.WriteString(msg.text)
 
-		if not msg.color then
-			msg.color = self.default_color or color_white
+		local color = tobool(msg.color and msg.color ~= color_white)
+		net.WriteBool(color)
+		if color then
+			net.WriteUInt(msg.color.r,8)
+			net.WriteUInt(msg.color.g,8)
+			net.WriteUInt(msg.color.b,8)
 		end
 
-		net.WriteVector(Vector(msg.color.r,msg.color.g,msg.color.b))
 	end
 
 	net.WriteBool(false)

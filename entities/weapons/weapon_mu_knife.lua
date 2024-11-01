@@ -76,8 +76,8 @@ SWEP.Primary.Ammo = "none"
 SWEP.PrintName = translate and translate.knife or "Knife"
 
 function SWEP:Initialize()
-	self.PrintName = translate and translate.knife or "Knife"
 	self.BaseClass.Initialize(self)
+	self.PrintName = translate and translate.knife or "Knife"
 end
 
 function SWEP:SetupDataTables()
@@ -160,19 +160,25 @@ function SWEP:GetTrace(left,up)
 	return tr
 end
 
+local TraceBase = {
+	["mask"] = MASK_SHOT_HULL,
+	["mins"] = Vector(-10,-10,-10),
+	["maxs"] = Vector(10,10,10)
+}
 function SWEP:AttackTrace()
 	local owner = self:GetOwner()
 	if owner:IsPlayer() then
 		owner:LagCompensation(true)
 	end
 
-	local trace = {}
+	local trace = table.Copy(TraceBase)
 	trace.filter = owner
 	trace.start = owner:GetShootPos()
 	trace.mask = MASK_SHOT_HULL
-	trace.endpos = trace.start + owner:GetAimVector() * self:GetFistRange()
-	trace.mins = Vector(-10,-10,-10)
-	trace.maxs = Vector(10,10,10)
+	local endpos = owner:GetShootPos()
+	endpos:Add(owner:GetAimVector())
+	endpos:Mul(self:GetFistRange())
+	trace.endpos = endpos
 	local tr = util.TraceHull(trace)
 	tr.TraceAimVector = owner:GetAimVector()
 
@@ -241,18 +247,22 @@ function SWEP:GetCharge()
 	return math.Clamp((math.sin(start * 2 - 1) + 1) / 2,0,1)
 end
 
+local BaseVel,BaseAng = Vector(0,1500,0),Angle(-28,0,0)
 function SWEP:ThrowKnife(force)
 	local ent = ents.Create("mu_knife")
 	local owner = self:GetOwner()
 	ent:SetOwner(owner)
 	ent:SetPos(owner:GetShootPos())
-	local knife_ang = Angle(-28,0,0) + owner:EyeAngles()
+	local knife_ang = owner:EyeAngles()
+	knife_ang:Add(BaseAng)
 	knife_ang:RotateAroundAxis(knife_ang:Right(),-90)
 	ent:SetAngles(knife_ang)
 	ent:Spawn()
 	local phys = ent:GetPhysicsObject()
-	phys:SetVelocity(owner:GetAimVector() * (force * 1000 + 200))
-	phys:AddAngleVelocity(Vector(0,1500,0))
+	local vel = owner:GetAimVector()
+	vel:Mul(force * 1000 + 200)
+	phys:SetVelocity(vel)
+	phys:AddAngleVelocity(BaseVel)
 	self:Remove()
 end
 

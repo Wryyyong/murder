@@ -7,6 +7,7 @@
 --			resultVar	$color2
 --		}
 --	}
+local BaseColor = Vector(62 / 255,88 / 255,106 / 255)
 matproxy.Add({
 	name = "PlayerColor",
 	init = function(self,_,values)
@@ -28,7 +29,7 @@ matproxy.Add({
 				mat:SetVector(self.ResultTo,col)
 			end
 		else
-			mat:SetVector(self.ResultTo,Vector(62.0 / 255.0,88.0 / 255.0,106.0 / 255.0))
+			mat:SetVector(self.ResultTo,BaseColor)
 		end
 	end
 })

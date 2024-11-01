@@ -2,22 +2,21 @@ util.AddNetworkString("mu_death")
 local PlayerMeta = FindMetaTable("Player")
 local EntityMeta = FindMetaTable("Entity")
 
+local BaseColor = Vector(0.5,0.5,0.5)
 function GM:PlayerInitialSpawn(ply)
 	ply.LootCollected = 0
 	ply.MurdererChance = 1
 
 	timer.Simple(0,function()
-		if IsValid(ply) then
-			ply:KillSilent()
-		end
+		if not IsValid(ply) then return end
+		ply:KillSilent()
 	end)
 
 	ply.HasMoved = true
 	ply:SetTeam(2)
 	self:NetworkRound(ply)
 	self.LastPlayerSpawn = CurTime()
-	local vec = Vector(0.5,0.5,0.5)
-	ply:SetPlayerColor(vec)
+	ply:SetPlayerColor(BaseColor)
 end
 
 function GM:PlayerSpawn(ply)

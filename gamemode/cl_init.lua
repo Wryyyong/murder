@@ -33,6 +33,7 @@ if GAMEMODE then
 	GM.FogEmitters = GAMEMODE.FogEmitters
 end
 
+local BasePos,BaseVel = Vector(0,0,30),Vector(0,0,4)
 function GM:Think()
 	for _,ply in pairs(player.GetAll()) do
 		if ply:Alive() and ply:GetNWBool("MurdererFog") then
@@ -45,7 +46,8 @@ function GM:Think()
 				ply.FogNextPart = CurTime()
 			end
 
-			local pos = ply:GetPos() + Vector(0,0,30)
+			local pos = ply:GetPos()
+			pos:Add(BasePos)
 			local client = LocalPlayer()
 
 			if ply.FogNextPart < CurTime() then
@@ -55,7 +57,10 @@ function GM:Think()
 				local vec = Vector(math.Rand(-8,8),math.Rand(-8,8),math.Rand(10,55))
 				local fog_pos = ply:LocalToWorld(vec)
 				local particle = ply.FogEmitter:Add("particle/snow.vmt",fog_pos)
-				particle:SetVelocity(Vector(0,0,4) + VectorRand() * 3)
+				local particleVec = VectorRand()
+				particleVec:Add(BaseVel)
+				particleVec:Mul(3)
+				particle:SetVelocity(particleVec)
 				particle:SetDieTime(5)
 				particle:SetStartAlpha(180)
 				particle:SetEndAlpha(0)
@@ -88,13 +93,11 @@ function GM:EntityRemoved()
 end
 
 function GM:PostDrawViewModel(_,_,weapon)
-	if weapon.UseHands or not weapon:IsScripted() then
-		local hands = LocalPlayer():GetHands()
+	if not (IsValid(weapon) and weapon.UseHands) then return end
+	local hands = LocalPlayer():GetHands()
 
-		if IsValid(hands) then
-			hands:DrawModel()
-		end
-	end
+	if not IsValid(hands) then return end
+	hands:DrawModel()
 end
 
 function GM:RenderScene()
