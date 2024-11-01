@@ -204,7 +204,7 @@ function GM:EndTheRound(reason,murderer)
 
 			local msgs = Translator:AdvVarTranslate(translate.murdererDisconnectKnown,{
 				murderer = {
-					text = murderer:Nick() .. ", " .. murderer:GetBystanderName(),
+					text = murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")",
 					color = Color(col.x * 255,col.y * 255,col.z * 255)
 				}
 			})
@@ -212,7 +212,7 @@ function GM:EndTheRound(reason,murderer)
 			local ct = ChatText(msgs)
 			ct:SendAll()
 			-- ct:Add(", it was ")
-			-- ct:Add(murderer:Nick() .. ", " .. murderer:GetBystanderName(), Color(col.x * 255, col.y * 255, col.z * 255))
+			-- ct:Add(murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")", Color(col.x * 255, col.y * 255, col.z * 255))
 		else
 			local ct = ChatText()
 			ct:Add(translate.murdererDisconnect)
@@ -223,7 +223,7 @@ function GM:EndTheRound(reason,murderer)
 
 		local msgs = Translator:AdvVarTranslate(translate.winBystandersMurdererWas,{
 			murderer = {
-				text = murderer:Nick() .. ", " .. murderer:GetBystanderName(),
+				text = murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")",
 				color = Color(col.x * 255,col.y * 255,col.z * 255)
 			}
 		})
@@ -237,7 +237,7 @@ function GM:EndTheRound(reason,murderer)
 
 		local msgs = Translator:AdvVarTranslate(translate.winMurdererMurdererWas,{
 			murderer = {
-				text = murderer:Nick() .. ", " .. murderer:GetBystanderName(),
+				text = murderer:GetBystanderName() .. " (" .. murderer:Nick() .. ")",
 				color = Color(col.x * 255,col.y * 255,col.z * 255)
 			}
 		})

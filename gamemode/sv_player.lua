@@ -222,7 +222,7 @@ function GM:PlayerDeath(ply,_,attacker)
 
 					local msgs = Translator:AdvVarTranslate(translate.killedTeamKill,{
 						player = {
-							text = attacker:Nick() .. ", " .. attacker:GetBystanderName(),
+							text = attacker:GetBystanderName() .. " (" .. attacker:Nick() .. ")",
 							color = Color(col.x * 255,col.y * 255,col.z * 255)
 						}
 					})
@@ -241,7 +241,7 @@ function GM:PlayerDeath(ply,_,attacker)
 
 			local msgs = Translator:AdvVarTranslate(translate.killedMurderer,{
 				player = {
-					text = attacker:Nick() .. ", " .. attacker:GetBystanderName(),
+					text = attacker:GetBystanderName() .. " (" .. attacker:Nick() .. ")",
 					color = Color(col.x * 255,col.y * 255,col.z * 255)
 				}
 			})
