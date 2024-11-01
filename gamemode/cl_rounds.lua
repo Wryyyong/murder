@@ -1,12 +1,10 @@
 GM.RoundStage = 0
 GM.LootCollected = 0
-GM.RoundSettings = {}
 GM.RoundStarted = 0
 
 if GAMEMODE then
 	GM.RoundStage = GAMEMODE.RoundStage
 	GM.LootCollected = GAMEMODE.LootCollected
-	GM.RoundSettings = GAMEMODE.RoundSettings
 end
 
 function GM:GetRound()
@@ -19,31 +17,16 @@ function GM:GetRoundTime()
 	return CurTime() - started
 end
 
-net.Receive("ChangeMaxLength",function()
-	local time = net.ReadInt(32)
-	GAMEMODE.RoundSettings.RoundMaxLength = time
-end)
-
 net.Receive("SetRound",function()
-	local r = net.ReadUInt(8)
-	local start = net.ReadDouble()
-	GAMEMODE.RoundStage = r
-	GAMEMODE.RoundStart = start
-	GAMEMODE.RoundSettings = {}
-	local settings = net.ReadBool()
+	local roundState = net.ReadUInt(3)
+	GAMEMODE.RoundStage = roundState
+	GAMEMODE.RoundStart = net.ReadDouble()
 
-	if settings then
-		GAMEMODE.RoundSettings.ShowAdminsOnScoreboard = net.ReadBool()
-		GAMEMODE.RoundSettings.AdminPanelAllowed = net.ReadBool()
-		GAMEMODE.RoundSettings.ShowSpectateInfo = net.ReadBool()
-		GAMEMODE.RoundSettings.RoundMaxLength = net.ReadInt(32)
-	end
-
-	if r == GAMEMODE.Round.RoundStarting then
+	if roundState == GAMEMODE.Round.RoundStarting then
 		GAMEMODE.StartNewRoundTime = net.ReadDouble()
 	end
 
-	if r == GAMEMODE.Round.Playing then
+	if roundState == GAMEMODE.Round.Playing then
 		timer.Simple(0.2,function()
 			local pitch = math.random(70,140)
 

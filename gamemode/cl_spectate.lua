@@ -38,7 +38,7 @@ function GM:RenderSpectate()
 				drawTextShadow(self:GetCSpectatee():Nick(),"MersRadialSmall",ScrW() / 2,ScrH() - 30 - h,Color(190,190,190),1)
 			end
 
-			if self.DrawGameHUD and GAMEMODE.RoundSettings.ShowSpectateInfo then
+			if self.DrawGameHUD and GAMEMODE.ShowSpectateInfo:GetBool() then
 				self:DrawGameHUD(self:GetCSpectatee())
 			end
 		end

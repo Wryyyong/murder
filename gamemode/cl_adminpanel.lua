@@ -196,8 +196,7 @@ end)
 -- PrintTable(tab)
 concommand.Add("mu_adminpanel",function(client)
 	if not client:IsAdmin() then return end
-	local canUse = GAMEMODE.RoundSettings.AdminPanelAllowed
-	if not canUse then return end
+	if not GAMEMODE.AdminPanelAllowed:GetBool() then return end
 
 	if IsValid(menu) then
 		menu:SetVisible(true)

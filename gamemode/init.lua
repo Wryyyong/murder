@@ -47,8 +47,6 @@ GM.AFKMoveToSpec = CreateConVar("mu_moveafktospectator",1,{FCVAR_ARCHIVE,FCVAR_N
 GM.RoundLimit = CreateConVar("mu_roundlimit",0,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Number of rounds we should play before map change",0)
 GM.DelayAfterEnoughPlayers = CreateConVar("mu_delay_after_enough_players",10,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Time (in seconds) we should wait to start the round after enough players have joined",0)
 GM.FlashlightBattery = CreateConVar("mu_flashlight_battery",10,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"How long the flashlight should last in seconds (0 for infinite)",0)
-GM.Language = CreateConVar("mu_language","",{FCVAR_ARCHIVE,FCVAR_NOTIFY},"The language Murder should use")
-GM.RoundMaxLength = CreateConVar("mu_round_length",-1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"How long are the rounds in seconds? (-1 to disable)",-1)
 
 function GM:Initialize()
 	self:EnsureTablesExist()

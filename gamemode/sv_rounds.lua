@@ -1,6 +1,5 @@
 util.AddNetworkString("SetRound")
 util.AddNetworkString("DeclareWinner")
-util.AddNetworkString("ChangeMaxLength")
 
 concommand.Add("mu_update_length",function(ply,_,args)
 	if not ply:IsUserGroup("superadmin") then return end
@@ -36,7 +35,7 @@ function GM:GetRoundTime()
 end
 
 function GM:CheckRoundTime()
-	local max = self.RoundSettings.RoundMaxLength or 0
+	local max = self.RoundMaxLength:GetInt() or -1
 	if max == -1 then return true end -- Disabled
 	local time = self:GetRoundTime()
 	time = max - time
@@ -50,38 +49,16 @@ function GM:CheckRoundTime()
 	end
 end
 
-function GM:ChangeRoundMaxLength(seconds)
-	net.Start("ChangeMaxLength")
-	net.WriteInt(seconds,32)
-	net.Broadcast()
-	self.RoundSettings.RoundMaxLength = seconds
-end
-
 function GM:SetRound(round)
 	self.RoundStage = round
 	self.RoundTime = CurTime()
-	self.RoundSettings = {}
-	self.RoundSettings.ShowAdminsOnScoreboard = self.ShowAdminsOnScoreboard:GetBool()
-	self.RoundSettings.AdminPanelAllowed = self.AdminPanelAllowed:GetBool()
-	self.RoundSettings.ShowSpectateInfo = self.ShowSpectateInfo:GetBool()
-	self.RoundSettings.RoundMaxLength = self.RoundMaxLength:GetInt()
 	self:NetworkRound()
 end
 
 function GM:NetworkRound(ply)
 	net.Start("SetRound")
-	net.WriteUInt(self.RoundStage,8)
+	net.WriteUInt(self.RoundStage,3)
 	net.WriteDouble(self.RoundTime)
-
-	local roundSettings = self.RoundSettings
-	net.WriteBool(roundSettings)
-
-	if roundSettings then
-		net.WriteBool(self.RoundSettings.ShowAdminsOnScoreboard)
-		net.WriteBool(self.RoundSettings.AdminPanelAllowed)
-		net.WriteBool(self.RoundSettings.ShowSpectateInfo)
-		net.WriteInt(self.RoundSettings.RoundMaxLength,32)
-	end
 
 	if self.RoundStage == 5 then
 		net.WriteDouble(self.StartNewRoundTime)

@@ -342,7 +342,7 @@ function GM:DrawGameHUD(ply)
 	end
 
 	if hook.Run("HUDShouldDraw","RoundTime") then
-		local max = self.RoundSettings.RoundMaxLength
+		local max = self.RoundMaxLength:GetInt() or -1
 
 		if max ~= -1 then
 			local time = math.floor(max - self:GetRoundTime())

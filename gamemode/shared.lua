@@ -6,10 +6,12 @@ GM.Email = ""
 GM.Website = "www.codingconcoctions.com/murder/"
 GM.Version = "30"
 
--- Replicated cVars
-GM.ShowAdminsOnScoreboard = CreateConVar("mu_scoreboard_show_admins",1,{FCVAR_ARCHIVE,FCVAR_REPLICATED},"Should show admins on scoreboard")
-GM.AdminPanelAllowed = CreateConVar("mu_allow_admin_panel",1,{FCVAR_ARCHIVE,FCVAR_REPLICATED},"Should allow admins to use mu_admin_panel")
-GM.ShowSpectateInfo = CreateConVar("mu_show_spectate_info",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY,FCVAR_REPLICATED},"Should show players name and color to spectators")
+-- cVars
+GM.Language = CreateConVar("mu_language","",{FCVAR_ARCHIVE,FCVAR_NOTIFY,FCVAR_REPLICATED},"The language Murder should use")
+GM.RoundMaxLength = CreateConVar("mu_round_length",-1,{FCVAR_ARCHIVE,FCVAR_NOTIFY,FCVAR_REPLICATED},"How long are the rounds in seconds? (-1 to disable)",-1,32767)
+GM.ShowAdminsOnScoreboard = CreateConVar("mu_scoreboard_show_admins",1,{FCVAR_ARCHIVE,FCVAR_REPLICATED},"Should show admins on scoreboard",0,1)
+GM.AdminPanelAllowed = CreateConVar("mu_allow_admin_panel",1,{FCVAR_ARCHIVE,FCVAR_REPLICATED},"Should allow admins to use mu_admin_panel",0,1)
+GM.ShowSpectateInfo = CreateConVar("mu_show_spectate_info",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY,FCVAR_REPLICATED},"Should show players name and color to spectators",0,1)
 
 function GM:SetupTeams()
 	team.SetUp(1,translate.teamSpectators,Color(150,150,150))
