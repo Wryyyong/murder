@@ -48,7 +48,7 @@ function GM:SpectateNext(ply,direction)
 	local players = {}
 	local index = 1
 
-	for _,v in pairs(team.GetPlayers(2)) do
+	for _,v in ipairs(team.GetPlayers(2)) do
 		if v:Alive() then
 			table.insert(players,v)
 

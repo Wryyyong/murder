@@ -8,7 +8,7 @@ end
 local function clearupRagdolls(ragdolls,max)
 	local count = 1
 
-	for k,rag in pairs(ragdolls) do
+	for k,rag in ipairs(ragdolls) do
 		if IsValid(rag) then
 			count = count + 1
 		else

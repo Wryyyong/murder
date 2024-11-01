@@ -35,7 +35,7 @@ end
 
 local BasePos,BaseVel = Vector(0,0,30),Vector(0,0,4)
 function GM:Think()
-	for _,ply in pairs(player.GetAll()) do
+	for _,ply in ipairs(player.GetAll()) do
 		if ply:Alive() and ply:GetNWBool("MurdererFog") then
 			if not ply.FogEmitter then
 				ply.FogEmitter = ParticleEmitter(ply:GetPos())
@@ -118,7 +118,7 @@ function GM:PreDrawMurderHalos(Add)
 	local WeaponHalos = {}
 
 	if self.HaloRenderLoot:GetBool() then
-		for _,v in pairs(ents.FindByClass("weapon_mu_magnum")) do
+		for _,v in ipairs(ents.FindByClass("weapon_mu_magnum")) do
 			if IsValid(v.Owner) then continue end
 			WeaponHalos[#WeaponHalos + 1] = {
 				["ent"] = v,
@@ -126,7 +126,7 @@ function GM:PreDrawMurderHalos(Add)
 			}
 		end
 
-		for _,v in pairs(ents.FindByClass("mu_loot")) do
+		for _,v in ipairs(ents.FindByClass("mu_loot")) do
 			LootHalos[#LootHalos + 1] = {
 				["ent"] = v,
 				["color"] = 1
@@ -135,7 +135,7 @@ function GM:PreDrawMurderHalos(Add)
 	end
 
 	if self:GetAmMurderer() and self.HaloRenderKnife:GetBool() then
-		for _,v in pairs(ents.FindByClass("weapon_mu_knife")) do
+		for _,v in ipairs(ents.FindByClass("weapon_mu_knife")) do
 			if IsValid(v:GetOwner()) then continue end
 			WeaponHalos[#WeaponHalos + 1] = {
 				["ent"] = v,
@@ -143,7 +143,7 @@ function GM:PreDrawMurderHalos(Add)
 			}
 		end
 
-		for _,v in pairs(ents.FindByClass("mu_knife")) do
+		for _,v in ipairs(ents.FindByClass("mu_knife")) do
 			WeaponHalos[#WeaponHalos + 1] = {
 				["ent"] = v,
 				["color"] = 2

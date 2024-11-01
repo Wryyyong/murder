@@ -40,7 +40,7 @@ function GM:MurdererThink()
 	local players = team.GetPlayers(2)
 	local murderer
 
-	for _,ply in pairs(players) do
+	for _,ply in ipairs(players) do
 		if ply:GetMurderer() then
 			murderer = ply
 			break
@@ -53,11 +53,11 @@ function GM:MurdererThink()
 			murderer.LastHadKnife = CurTime()
 		else
 			if murderer.LastHadKnife and murderer.LastHadKnife + NO_KNIFE_TIME < CurTime() then
-				for _,ent in pairs(ents.FindByClass("weapon_mu_knife")) do
+				for _,ent in ipairs(ents.FindByClass("weapon_mu_knife")) do
 					ent:Remove()
 				end
 
-				for _,ent in pairs(ents.FindByClass("mu_knife")) do
+				for _,ent in ipairs(ents.FindByClass("mu_knife")) do
 					ent:Remove()
 				end
 

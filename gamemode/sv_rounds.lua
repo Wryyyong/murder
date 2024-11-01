@@ -87,7 +87,7 @@ function GM:RoundThink()
 		if self.RoundUnFreezePlayers and self.RoundUnFreezePlayers < CurTime() then
 			self.RoundUnFreezePlayers = nil
 
-			for _,ply in pairs(players) do
+			for _,ply in ipairs(players) do
 				if ply:Alive() then
 					ply:Freeze(false)
 					ply.Frozen = false
@@ -103,7 +103,7 @@ function GM:RoundThink()
 			local murderer
 			players = team.GetPlayers(2)
 
-			for _,v in pairs(players) do
+			for _,v in ipairs(players) do
 				if v:GetMurderer() then
 					murderer = v
 				end
@@ -139,7 +139,7 @@ function GM:RoundCheckForWin()
 
 	local survivors = {}
 
-	for _,v in pairs(players) do
+	for _,v in ipairs(players) do
 		if v:Alive() and not v:GetMurderer() then
 			table.insert(survivors,v)
 		end
@@ -192,7 +192,7 @@ function GM:EndTheRound(reason,murderer)
 	if self.RoundStage ~= self.Round.Playing then return end
 	local players = team.GetPlayers(2)
 
-	for _,ply in pairs(players) do
+	for _,ply in ipairs(players) do
 		ply:SetTKer(false)
 		ply:SetMurdererRevealed(false)
 		ply:UnMurdererDisguise()
@@ -251,7 +251,7 @@ function GM:EndTheRound(reason,murderer)
 		net.WriteUInt(murderer:EntIndex() - 1,plyIdxBits)
 	end
 
-	for _,ply in pairs(team.GetPlayers(2)) do
+	for _,ply in ipairs(team.GetPlayers(2)) do
 		net.WriteBool(true)
 		net.WriteUInt(ply:EntIndex() - 1,plyIdxBits)
 		net.WriteUInt(ply.LootCollected,8)
@@ -260,7 +260,7 @@ function GM:EndTheRound(reason,murderer)
 	net.WriteBool(false)
 	net.Broadcast()
 
-	for _,ply in pairs(players) do
+	for _,ply in ipairs(players) do
 		if not ply.HasMoved and not ply.Frozen and self.AFKMoveToSpec:GetBool() then
 			local oldTeam = ply:Team()
 			ply:SetTeam(1)
@@ -324,7 +324,7 @@ function GM:StartNewRound()
 	self.RoundUnFreezePlayers = curTime + 10
 	players = team.GetPlayers(2)
 
-	for _,ply in pairs(players) do
+	for _,ply in ipairs(players) do
 		ply:UnSpectate()
 	end
 
@@ -337,7 +337,7 @@ function GM:StartNewRound()
 	-- pick a random murderer, weighted
 	local rand = WeightedRandom()
 
-	for _,ply in pairs(players) do
+	for _,ply in ipairs(players) do
 		rand:Add(ply.MurdererChance ^ weightMul,ply)
 		ply.MurdererChance = ply.MurdererChance + 1
 	end
@@ -354,7 +354,7 @@ function GM:StartNewRound()
 		murderer:SetMurderer(true)
 	end
 
-	for _,ply in pairs(players) do
+	for _,ply in ipairs(players) do
 		if ply ~= murderer then
 			ply:SetMurderer(false)
 		end
@@ -435,7 +435,7 @@ function GM:RotateMap()
 	local map = game.GetMap()
 	local index
 
-	for k,map2 in pairs(self.MapList) do
+	for k,map2 in ipairs(self.MapList) do
 		if map == map2 then
 			index = k
 		end
@@ -475,7 +475,7 @@ function GM:SaveMapList()
 
 	local txt = ""
 
-	for _,map in pairs(self.MapList) do
+	for _,map in ipairs(self.MapList) do
 		txt = txt .. map .. "\r\n"
 	end
 
@@ -496,7 +496,7 @@ function GM:LoadMapList()
 	else
 		local tbl = {}
 
-		for _,map in pairs(defaultMapList) do
+		for _,map in ipairs(defaultMapList) do
 			if file.Exists("maps/" .. map .. ".bsp","GAME") then
 				table.insert(tbl,map)
 			end

@@ -4,7 +4,7 @@ local color_green = Color(0,150,0)
 function GM:DrawSpawnsVisualise()
 	if not self.SpawnsVisualise then return end
 
-	for _,v in pairs(self.Spawns) do
+	for _,v in ipairs(self.Spawns) do
 		local pos = v.Pos:ToScreen()
 
 		if pos.visible then
@@ -39,7 +39,7 @@ local function unnetworkList()
 		GAMEMODE.Spawns[i].Ent:SetPos(pos)
 	end
 
-	for k,v in pairs(GAMEMODE.Spawns) do
+	for k,v in ipairs(GAMEMODE.Spawns) do
 		if not exists[k] then
 			if IsValid(v.Ent) then
 				v.Ent:Remove()
@@ -54,7 +54,7 @@ net.Receive("Spawns_View",function()
 	if net.ReadBool() then
 		GAMEMODE.SpawnsVisualise = nil
 
-		for k,v in pairs(GAMEMODE.Spawns) do
+		for k,v in ipairs(GAMEMODE.Spawns) do
 			if IsValid(v.Ent) then
 				v.Ent:Remove()
 			end

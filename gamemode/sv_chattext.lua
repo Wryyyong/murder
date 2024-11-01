@@ -18,7 +18,7 @@ function meta:AddPart(msg)
 end
 
 function meta:AddParts(msgs)
-	for _,msg in pairs(msgs) do
+	for _,msg in ipairs(msgs) do
 		self.msgs[#self.msgs + 1] = msg
 	end
 
@@ -53,7 +53,7 @@ end
 function meta:NetConstructMsg()
 	net.Start("chattext_msg")
 
-	for _,msg in pairs(self.msgs) do
+	for _,msg in ipairs(self.msgs) do
 		net.WriteBool(true)
 		net.WriteString(msg.text)
 
@@ -81,7 +81,7 @@ function ChatText(msgs)
 end
 
 function meta:Print()
-	for _,line in pairs(self.msgs) do
+	for _,line in ipairs(self.msgs) do
 		MsgC(line.color,line.text)
 	end
 

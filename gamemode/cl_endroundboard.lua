@@ -68,7 +68,7 @@ function GM:DisplayEndRoundBoard(data)
 		}
 	})
 
-	for _,msg in pairs(msgs) do
+	for _,msg in ipairs(msgs) do
 		local was = vgui.Create("DLabel",murdererPnl)
 		was:Dock(LEFT)
 		was:SetText(msg.text)
@@ -97,7 +97,7 @@ function GM:DisplayEndRoundBoard(data)
 	lootList:Dock(FILL)
 	table.sort(data.collectedLoot,function(a,b) return a.lootCount > b.lootCount end)
 
-	for _,v in pairs(data.collectedLoot) do
+	for _,v in ipairs(data.collectedLoot) do
 		if not v.realName then continue end
 		local pnl = vgui.Create("DPanel")
 		pnl:SetTall(draw.GetFontHeight("MersRadialSmall"))

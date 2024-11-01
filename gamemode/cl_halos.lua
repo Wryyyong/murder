@@ -52,7 +52,7 @@ local function Render(entry)
 	render.SetStencilFailOperation(STENCIL_KEEP)
 	render.SetStencilZFailOperation(STENCIL_KEEP)
 
-	for _,v in pairs(entry.Ents) do
+	for _,v in ipairs(entry.Ents) do
 		if IsValid(v.ent) then
 			render.SetStencilReferenceValue(2 ^ (v.color - 1))
 			v.ent:DrawModel()
@@ -64,7 +64,7 @@ local function Render(entry)
 	render.SetStencilCompareFunction(STENCIL_EQUAL)
 	render.SetStencilPassOperation(STENCIL_KEEP)
 
-	for k,v in pairs(entry.Colors) do
+	for k,v in ipairs(entry.Colors) do
 		render.SetStencilReferenceValue(2 ^ (k - 1))
 		cam.Start2D()
 		surface.SetDrawColor(v)

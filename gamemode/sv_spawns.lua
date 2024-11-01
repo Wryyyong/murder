@@ -7,7 +7,7 @@ if not TeamSpawns then
 end
 
 local function networkList(spawns)
-	for k,v in pairs(spawns) do
+	for k,v in ipairs(spawns) do
 		net.WriteUInt(k,32)
 		net.WriteVector(v)
 	end
@@ -19,7 +19,7 @@ local function networkChange(listName)
 	local spawns = TeamSpawns[listName]
 	if not spawns then return end
 
-	for _,ply in pairs(player.GetAll()) do
+	for _,ply in ipairs(player.GetAll()) do
 		if ply.SpawnsVisualise == listName then
 			net.Start("Spawns_ViewChange")
 			networkList(spawns)

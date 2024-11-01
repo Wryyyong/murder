@@ -9,12 +9,13 @@ net.Receive("mu_adminpanel_details",function(_,ply)
 	tab.players = {}
 	tab.weightMul = GAMEMODE.MurdererWeight:GetFloat()
 	local total = 0
+	local teamPlys = team.GetPlayers(2)
 
-	for _,teamply in pairs(team.GetPlayers(2)) do
+	for _,teamply in ipairs(teamPlys) do
 		total = total + (teamply.MurdererChance or 1) ^ tab.weightMul
 	end
 
-	for _,teamply in pairs(team.GetPlayers(2)) do
+	for _,teamply in ipairs(teamPlys) do
 		local t = {}
 		t.player = teamply:EntIndex() -- cant send players via JSON
 		t.murderer = teamply:GetMurderer()

@@ -138,7 +138,7 @@ function GM:DrawStartRoundInformation()
 
 	local hasMagnum = false
 
-	for _,wep in pairs(client:GetWeapons()) do
+	for _,wep in ipairs(client:GetWeapons()) do
 		if wep:GetClass() == "weapon_mu_magnum" then
 			hasMagnum = true
 			break
@@ -161,7 +161,7 @@ function GM:DrawStartRoundInformation()
 	if desc then
 		local fontHeight = draw.GetFontHeight("MersRadialSmall")
 
-		for k,v in pairs(desc) do
+		for k,v in ipairs(desc) do
 			drawTextShadow(v,"MersRadialSmall",ScrW() / 2,ScrH() * 0.75 + (k - 1) * fontHeight,color,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 	end
@@ -206,7 +206,7 @@ function GM:DrawGameHUD(ply)
 			-- find closest button to cursor with usable range
 			local dot,but
 
-			for _,lbut in pairs(ents.FindByClass("ttt_traitor_button")) do
+			for _,lbut in ipairs(ents.FindByClass("ttt_traitor_button")) do
 				local vec = lbut:GetPos() - ply:GetShootPos()
 				local ldis,ldot = vec:Length(),vec:GetNormal():Dot(ply:GetAimVector())
 

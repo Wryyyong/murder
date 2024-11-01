@@ -58,7 +58,7 @@ end
 
 -- removes a name to the bystander parts generation table
 function GM:RemoveBystanderNamePart(name,sex)
-	for k,v in pairs(self.BystanderNameParts) do
+	for k,v in ipairs(self.BystanderNameParts) do
 		if v.name == name and v.sex == sex then
 			table.remove(self.BystanderNameParts,k)
 			break
@@ -78,7 +78,7 @@ function GM:GenerateName(words,sex)
 	for _ = 1,words do
 		local tab = {}
 
-		for _,v in pairs(self.BystanderNameParts) do
+		for _,v in ipairs(self.BystanderNameParts) do
 			if v.sex == sex or v.sex == nil then
 				table.insert(tab,v.name)
 			end
@@ -154,7 +154,7 @@ end
 concommand.Add("mu_print_players",function(admin)
 	if not admin:IsAdmin() then return end
 
-	for _,ply in pairs(player.GetAll()) do
+	for _,ply in ipairs(player.GetAll()) do
 		local c = ChatText()
 		c:Add(ply:Nick())
 		c:Add(" " .. ply:GetBystanderName(),ply:GetPlayerColor():ToColor())

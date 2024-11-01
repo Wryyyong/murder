@@ -92,10 +92,10 @@ local function addPlayerItem(self,mlist,ply,pteam)
 end
 
 local function doPlayerItems(self,mlist,pteam)
-	for _,ply in pairs(team.GetPlayers(pteam)) do
+	for _,ply in ipairs(team.GetPlayers(pteam)) do
 		local found = false
 
-		for _,v in pairs(mlist:GetCanvas():GetChildren()) do
+		for _,v in ipairs(mlist:GetCanvas():GetChildren()) do
 			if v.player == ply then
 				found = true
 				v.ctime = CurTime()
@@ -109,7 +109,7 @@ local function doPlayerItems(self,mlist,pteam)
 
 	local del = false
 
-	for _,v in pairs(mlist:GetCanvas():GetChildren()) do
+	for _,v in ipairs(mlist:GetCanvas():GetChildren()) do
 		if v.ctime ~= CurTime() then
 			v:Remove()
 			del = true

@@ -56,7 +56,7 @@ end
 
 local files,_dirs = file.Find(rootFolder .. "lang/*","LUA")
 
-for _,v in pairs(files) do
+for _,v in ipairs(files) do
 	AddCSLuaFile(rootFolder .. "lang/" .. v)
 	local name = v:sub(1,-5)
 	Translator:LoadLanguage(name)
@@ -99,7 +99,7 @@ else
 end
 
 function Translator:Translate(languageTable,names)
-	for _,name in pairs(names) do
+	for _,name in ipairs(names) do
 		local a = rawget(languageTable,name)
 
 		if a ~= nil then

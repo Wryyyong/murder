@@ -18,7 +18,7 @@ function GM:LoadLootModels()
 
 	if lootResult ~= false then
 		-- PrintTable(lootResult)
-		for _,v in pairs(lootResult) do
+		for _,v in ipairs(lootResult) do
 			LootModels[v.alias] = v.file
 		end
 	else
@@ -41,11 +41,11 @@ function GM:CountLootItems()
 end
 
 function GM:SpawnLoot()
-	for _,ent in pairs(ents.FindByClass("mu_loot")) do
+	for _,ent in ipairs(ents.FindByClass("mu_loot")) do
 		ent:Remove()
 	end
 
-	for _,data in pairs(LootItems) do
+	for _,data in ipairs(LootItems) do
 		self:SpawnLootItem(data)
 	end
 end
@@ -208,7 +208,7 @@ concommand.Add("mu_loot_list",function(ply,_,args)
 
 	ply:ChatPrint("Loot items ")
 
-	for k,pos in pairs(LootItems) do
+	for k,pos in ipairs(LootItems) do
 		ply:ChatPrint(k .. ": " .. getLootPrintString(pos,ply:GetPos()))
 	end
 end)
@@ -230,7 +230,7 @@ concommand.Add("mu_loot_closest",function(ply,_,args)
 
 	local closest
 
-	for k,data in pairs(LootItems) do
+	for k,data in ipairs(LootItems) do
 		if not closest or LootItems[closest].pos:Distance(ply:GetPos()) > data.pos:Distance(ply:GetPos()) then
 			closest = k
 		end
@@ -303,7 +303,7 @@ concommand.Add("mu_loot_adjustpos",function(ply,_,args)
 	local ent = ply:GetEyeTrace().Entity
 
 	if IsValid(ent) and ent:GetClass() == "mu_loot" and ent.LootData then
-		for k,v in pairs(LootItems) do
+		for k,v in ipairs(LootItems) do
 			if v == ent.LootData then
 				key = k
 			end

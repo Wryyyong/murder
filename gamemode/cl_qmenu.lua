@@ -58,7 +58,7 @@ local function addElement(transCode,code)
 	local t = {}
 	t.TransCode = transCode
 	t.Code = code
-	table.insert(elements,t)
+	elements[#elements + 1] = t
 end
 
 concommand.Add("+menu",function(client)
@@ -121,7 +121,7 @@ function GM:DrawRadialMenu()
 		local add = math.pi * 1.5 + math.pi / total
 		local add2 = math.pi * 1.5 - math.pi / total
 
-		for k,ment in pairs(ments) do
+		for k,ment in ipairs(ments) do
 			local x,y = math.cos((k - 1) / total * math.pi * 2 + math.pi * 1.5),math.sin((k - 1) / total * math.pi * 2 + math.pi * 1.5)
 			local lx,ly = math.cos((k - 1) / total * math.pi * 2 + add),math.sin((k - 1) / total * math.pi * 2 + add)
 			local textCol

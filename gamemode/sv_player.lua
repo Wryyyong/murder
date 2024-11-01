@@ -94,7 +94,7 @@ function GM:PlayerSetModel(ply)
 end
 
 function GM:DoPlayerDeath(ply)
-	for _,weapon in pairs(ply:GetWeapons()) do
+	for _,weapon in ipairs(ply:GetWeapons()) do
 		if weapon:GetClass() == "weapon_mu_magnum" then
 			ply:DropWeapon(weapon)
 		end
@@ -159,7 +159,7 @@ end
 local function generateSpawnEntities(spawnList)
 	local tbl = {}
 
-	for _,pos in pairs(spawnList) do
+	for _,pos in ipairs(spawnList) do
 		local t = {}
 		t.IsValid = isValid
 		t.GetPos = getPos
@@ -200,7 +200,7 @@ function GM:PlayerDeath(ply,_,attacker)
 		local murderer
 		local players = team.GetPlayers(2)
 
-		for _,v in pairs(players) do
+		for _,v in ipairs(players) do
 			if v:GetMurderer() then
 				murderer = v
 			end
@@ -437,7 +437,7 @@ function GM:PlayerSay(ply,text,say_team)
 		ct:Add(ply:GetBystanderName(),ply:GetPlayerColor():ToColor())
 		ct:Add(": " .. text,color_white)
 
-		for _,ply2 in pairs(player.GetAll()) do
+		for _,ply2 in ipairs(player.GetAll()) do
 			local can = hook.Run("PlayerCanSeePlayersChat",text,say_team,ply2,ply)
 
 			if can then
@@ -496,7 +496,7 @@ local function pressedUse(self,ply)
 		-- find closest button to cursor with usable range
 		local _dis,dot,but
 
-		for _,lbut in pairs(ents.FindByClass("ttt_traitor_button")) do
+		for _,lbut in ipairs(ents.FindByClass("ttt_traitor_button")) do
 			if lbut.TraitorButton then
 				local vec = lbut:GetPos() - ply:GetShootPos()
 				local ldis,ldot = vec:Length(),vec:GetNormal():Dot(ply:GetAimVector())

@@ -1,17 +1,17 @@
 -- add cs lua all the cl_ or sh_ files
 local folders = {(GM or GAMEMODE).Folder:sub(11) .. "/gamemode/"}
 
-for _,folder in pairs(folders) do
+for _,folder in ipairs(folders) do
 	local files,subfolders = file.Find(folder .. "*","LUA")
 
-	for _,filename in pairs(files) do
+	for _,filename in ipairs(files) do
 		local fntrim = filename:sub(1,3)
 		if fntrim == "cl_" or fntrim == "sh_" or filename == "shared.lua" or folder:match("/sh_") or folder:match("/cl_") then
 			AddCSLuaFile(folder .. filename)
 		end
 	end
 
-	for _,subfolder in pairs(subfolders) do
+	for _,subfolder in ipairs(subfolders) do
 		table.insert(folders,folder .. subfolder .. "/")
 	end
 end
@@ -63,7 +63,7 @@ end
 function GM:InitPostEntity()
 	local canAdd = self:CountLootItems() <= 0
 
-	for _,ent in pairs(ents.FindByClass("mu_loot")) do
+	for _,ent in ipairs(ents.FindByClass("mu_loot")) do
 		if canAdd then
 			self:AddLootItem(ent)
 		end
@@ -73,7 +73,7 @@ function GM:InitPostEntity()
 end
 
 function GM:InitPostEntityAndMapCleanup()
-	for _,ent in pairs(ents.GetAll()) do
+	for _,ent in ipairs(ents.GetAll()) do
 		if ent:IsWeapon() or ent:GetClass():match("^weapon_") then
 			ent:Remove()
 		end
@@ -83,7 +83,7 @@ function GM:InitPostEntityAndMapCleanup()
 		end
 	end
 
-	for _,ent in pairs(ents.FindByClass("mu_loot")) do
+	for _,ent in ipairs(ents.FindByClass("mu_loot")) do
 		ent:Remove()
 	end
 	-- self:SpawnLoot()
@@ -95,7 +95,7 @@ function GM:Think()
 	self:LootThink()
 	self:FlashlightThink()
 
-	for _,ply in pairs(player.GetAll()) do
+	for _,ply in ipairs(player.GetAll()) do
 		if ply:IsCSpectating() and IsValid(ply:GetCSpectatee()) and (not ply.LastSpectatePosSet or ply.LastSpectatePosSet < CurTime()) then
 			ply.LastSpectatePosSet = CurTime() + 0.25
 			ply:SetPos(ply:GetCSpectatee():GetPos())
@@ -126,7 +126,7 @@ function GM:OnStartRound()
 end
 
 function GM:SendMessageAll(msg)
-	for _,v in pairs(player.GetAll()) do
+	for _,v in ipairs(player.GetAll()) do
 		v:ChatPrint(msg)
 	end
 end

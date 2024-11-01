@@ -22,7 +22,7 @@ local function renderfoot(gmTbl)
 	-- local pos = EyePos()
 	local lifeTime = math.Clamp(gmTbl.FootstepMaxLifeTime:GetInt(),0,30)
 
-	for idx,footstep in pairs(FootSteps) do
+	for idx,footstep in ipairs(FootSteps) do
 		if footstep.curtime + lifeTime > CurTime() then
 			if (footstep.pos - EyePos()):LengthSqr() < maxDistance then
 				render.DrawQuadEasy(footstep.pos + footstep.normal * 0.01,footstep.normal,10,20,footstep.col,footstep.angle)
