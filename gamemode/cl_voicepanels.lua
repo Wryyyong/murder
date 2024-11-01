@@ -80,6 +80,7 @@ function PANEL:SetBystanderState(state)
 		else
 			self.LabelName:SetText(self.ply:GetBystanderName())
 		end
+
 		self.LabelName:SetTextColor(color)
 		self.ColorBlock:SetVisible(true)
 		self.Avatar:SetVisible(false)
@@ -98,7 +99,6 @@ end
 
 function PANEL:Think()
 	self:CheckBystanderState()
-
 	if not self.fadeAnim then return end
 	self.fadeAnim:Run()
 end

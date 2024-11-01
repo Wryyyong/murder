@@ -58,6 +58,7 @@ local function AddAngle(targetAng,addAng)
 end
 
 local CollideAngle,RagdollAngle = Angle(-60,0,0),Angle(30,-90,0)
+
 function ENT:PhysicsCollide(data)
 	if self.HitSomething or self.RemoveNext then return end
 	local ply = data.HitEntity

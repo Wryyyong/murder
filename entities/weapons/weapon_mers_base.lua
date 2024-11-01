@@ -44,7 +44,7 @@ function SWEP:IsIdle()
 	local NextPrimaryFire = self:GetNextPrimaryFire()
 	local DrawEnd = self:GetDrawEnd()
 
-	return not ((ReloadEnd > 0 and ReloadEnd >= CurrentTime) or (NextPrimaryFire > 0 and NextPrimaryFire >= CurrentTime) or (DrawEnd > 0 and DrawEnd >= CurrentTime))
+	return not (ReloadEnd > 0 and ReloadEnd >= CurrentTime or NextPrimaryFire > 0 and NextPrimaryFire >= CurrentTime or DrawEnd > 0 and DrawEnd >= CurrentTime)
 end
 
 function SWEP:PrimaryAttack()
@@ -107,6 +107,7 @@ end
 
 function SWEP:DoPrimaryAttackEffect(stats)
 	local owner = self:GetOwner()
+
 	local bullet = {
 		["Num"] = self.Primary.NumShots or 1,
 		["Src"] = owner:GetShootPos(),
@@ -116,6 +117,7 @@ function SWEP:DoPrimaryAttackEffect(stats)
 		["Force"] = self.Primary.Force or (self.Primary.Damage or 1) * 3,
 		["Damage"] = stats.damage or 1
 	}
+
 	owner:FireBullets(bullet)
 end
 
@@ -128,6 +130,7 @@ end
 
 function SWEP:Think()
 	local owner = self:GetOwner()
+
 	if self:GetReloadEnd() > 0 and self:GetReloadEnd() < CurTime() then
 		self:SetReloadEnd(0)
 
@@ -222,11 +225,13 @@ local function AddAngle(_,targetAng,addAng)
 	targetAng:RotateAroundAxis(targetAng:Forward(),addAng[3]) -- roll
 	targetAng:RotateAroundAxis(targetAng:Right(),addAng[1]) -- pitch
 end
+
 SWEP.AddAngle = AddAngle
 
 -- iron sights
 function SWEP:CalcViewModelView(_,_,_,pos,ang)
 	local sPos,sAng
+
 	if self.Ironsights then
 		sPos = self.Ironsights.Pos
 		sAng = self.Ironsights.Angle

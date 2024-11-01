@@ -1,8 +1,8 @@
 util.AddNetworkString("mu_death")
 local PlayerMeta = FindMetaTable("Player")
 local EntityMeta = FindMetaTable("Entity")
-
 local BaseColor = Vector(0.5,0.5,0.5)
+
 function GM:PlayerInitialSpawn(ply)
 	ply.LootCollected = 0
 	ply.MurdererChance = 1
@@ -184,10 +184,10 @@ function GM:PlayerSelectTeamSpawn(_,pl)
 end
 
 function GM:PlayerDeathSound()
-	-- don't play sound
 	return true
 end
 
+-- don't play sound
 function GM:ScalePlayerDamage()
 end
 

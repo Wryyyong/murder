@@ -10,6 +10,7 @@ function ENT:Draw()
 end
 
 local ParticleVelocity = Vector(0,0,4)
+
 function ENT:Think()
 	local pos = self:GetPos()
 	local client = LocalPlayer()

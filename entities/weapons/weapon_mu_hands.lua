@@ -25,6 +25,7 @@ function SWEP:DoPrimaryAttackEffect()
 end
 
 local BasePos,BaseAng = Vector(-35,0,0),Angle(-90,0,0)
+
 function SWEP:CalcViewModelView(_,_,_,pos,ang)
 	-- iron sights
 	self:AddAngle(ang,BaseAng)
@@ -103,8 +104,8 @@ end
 
 function SWEP:Think()
 	self.BaseClass.Think(self)
-
 	local owner = self:GetOwner()
+
 	if IsValid(owner) and owner:KeyDown(IN_ATTACK2) then
 		if IsValid(self.CarryEnt) then
 			self:ApplyForce()
@@ -116,6 +117,7 @@ end
 
 function SWEP:PrimaryAttack()
 	local owner = self:GetOwner()
+
 	if SERVER then
 		if owner:HasWeapon("weapon_mu_knife") then
 			owner:SelectWeapon("weapon_mu_knife")

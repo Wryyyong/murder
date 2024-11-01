@@ -21,7 +21,6 @@ function PlayerMeta:SetTKer(bool)
 	net.Start("mu_tker")
 	net.WriteBool(bool)
 	net.Send(self)
-
 	self:CalculateSpeed()
 end
 

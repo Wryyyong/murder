@@ -138,7 +138,6 @@ local function makeTeamList(parent,pteam)
 		if not self.RefreshWait or self.RefreshWait < CurTime() then
 			self.RefreshWait = CurTime() + 0.1
 			doPlayerItems(self,mlist,pteam)
-
 			-- update chaos/control
 			--[[
 			if pteam == 2 then

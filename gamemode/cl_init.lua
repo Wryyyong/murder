@@ -34,6 +34,7 @@ if GAMEMODE then
 end
 
 local BasePos,BaseVel = Vector(0,0,30),Vector(0,0,4)
+
 function GM:Think()
 	for _,ply in ipairs(player.GetAll()) do
 		if ply:Alive() and ply:GetNWBool("MurdererFog") then
@@ -95,7 +96,6 @@ end
 function GM:PostDrawViewModel(_,_,weapon)
 	if not (IsValid(weapon) and weapon.UseHands) then return end
 	local hands = LocalPlayer():GetHands()
-
 	if not IsValid(hands) then return end
 	hands:DrawModel()
 end
@@ -113,13 +113,13 @@ local HaloColors = {Color(0,220,0),Color(220,0,0),Color(0,110,220)}
 function GM:PreDrawMurderHalos(Add)
 	local client = LocalPlayer()
 	if not (IsValid(client) and client:Alive() and self.HaloRender:GetBool()) then return end
-
 	local LootHalos = {}
 	local WeaponHalos = {}
 
 	if self.HaloRenderLoot:GetBool() then
 		for _,v in ipairs(ents.FindByClass("weapon_mu_magnum")) do
 			if IsValid(v.Owner) then continue end
+
 			WeaponHalos[#WeaponHalos + 1] = {
 				["ent"] = v,
 				["color"] = 3
@@ -137,6 +137,7 @@ function GM:PreDrawMurderHalos(Add)
 	if self:GetAmMurderer() and self.HaloRenderKnife:GetBool() then
 		for _,v in ipairs(ents.FindByClass("weapon_mu_knife")) do
 			if IsValid(v:GetOwner()) then continue end
+
 			WeaponHalos[#WeaponHalos + 1] = {
 				["ent"] = v,
 				["color"] = 2

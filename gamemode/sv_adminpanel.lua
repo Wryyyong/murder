@@ -29,6 +29,6 @@ net.Receive("mu_adminpanel_details",function(_,ply)
 	sendData.lootData = lootTab
 	local json = util.Compress(util.TableToJSON(sendData))
 	net.Start("mu_adminpanel_details")
-		net.WriteData(json)
+	net.WriteData(json)
 	net.Send(ply)
 end)

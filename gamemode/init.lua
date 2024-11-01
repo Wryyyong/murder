@@ -6,6 +6,7 @@ for _,folder in ipairs(folders) do
 
 	for _,filename in ipairs(files) do
 		local fntrim = filename:sub(1,3)
+
 		if fntrim == "cl_" or fntrim == "sh_" or filename == "shared.lua" or folder:match("/sh_") or folder:match("/cl_") then
 			AddCSLuaFile(folder .. filename)
 		end
@@ -37,16 +38,27 @@ include("sv_tker.lua")
 include("sv_flashlight.lua")
 resource.AddFile("materials/thieves/footprint.vmt")
 resource.AddFile("materials/murder/melon_logo_scoreboard.png")
+
 GM.ShowBystanderTKs = CreateConVar("mu_show_bystander_tks",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Should show name of killer in chat on a bystander team kill",0,1)
+
 GM.MurdererFogTime = CreateConVar("mu_murderer_fogtime",60 * 4,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Time (in seconds) it takes for a Murderer to show fog for no kills, 0 to disable",0)
+
 GM.TKPenaltyTime = CreateConVar("mu_tk_penalty_time",20,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Time (in seconds) for a bystander to be penalised for a team kill",0)
+
 GM.LocalChat = CreateConVar("mu_localchat",0,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Local chat, when enabled only nearby players can hear other players",0,1)
+
 GM.LocalChatRange = CreateConVar("mu_localchat_range",550,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"The range at which you can hear other players",0)
+
 GM.CanDisguise = CreateConVar("mu_disguise",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Whether the murderer can disguise as dead players",0,1)
+
 GM.RemoveDisguiseOnKill = CreateConVar("mu_disguise_removeonkill",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Remove the murderer's disguise when he kills someone",0,1)
+
 GM.AFKMoveToSpec = CreateConVar("mu_moveafktospectator",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Should we move AFK players to spectator on round end",0,1)
+
 GM.RoundLimit = CreateConVar("mu_roundlimit",0,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Number of rounds we should play before map change",0)
+
 GM.DelayAfterEnoughPlayers = CreateConVar("mu_delay_after_enough_players",10,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Time (in seconds) we should wait to start the round after enough players have joined",0)
+
 GM.FlashlightBattery = CreateConVar("mu_flashlight_battery",10,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"How long the flashlight should last in seconds (0 for infinite)",0)
 
 function GM:Initialize()

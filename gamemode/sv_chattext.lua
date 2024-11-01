@@ -56,15 +56,14 @@ function meta:NetConstructMsg()
 	for _,msg in ipairs(self.msgs) do
 		net.WriteBool(true)
 		net.WriteString(msg.text)
-
 		local color = tobool(msg.color and msg.color ~= color_white)
 		net.WriteBool(color)
+
 		if color then
 			net.WriteUInt(msg.color.r,8)
 			net.WriteUInt(msg.color.g,8)
 			net.WriteUInt(msg.color.b,8)
 		end
-
 	end
 
 	net.WriteBool(false)

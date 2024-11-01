@@ -64,6 +64,7 @@ local function drawTextShadow(t,f,x,y,c,px,py)
 end
 
 local SecretWeapon = Color(120,70,245)
+
 -- local healthCol = Color(120,255,20)
 function GM:HUDPaint()
 	local round = self:GetRound()
@@ -186,12 +187,10 @@ local FogAlertTextColor = Color(90,20,20)
 function GM:DrawGameHUD(ply)
 	if not IsValid(ply) then return end
 	local health = ply:Health()
-
 	-- surface.SetFont("MersRadial")
 	-- local w,h = surface.GetTextSize("Health")
 	-- drawTextShadow("Health", "MersRadial", 20, ScrH() - 10, healthCol, 0, TEXT_ALIGN_BOTTOM)
 	-- drawTextShadow(health, "MersRadialBig", 20 + w + 10, ScrH() - 10 + 3, healthCol, 0, TEXT_ALIGN_BOTTOM)
-
 	local tr = ply:GetEyeTraceNoCursor()
 
 	if self:GetAmMurderer() then
@@ -224,7 +223,6 @@ function GM:DrawGameHUD(ply)
 				if sp.visible then
 					--local sz = 16
 					local col = but:GetNextUseTime() > CurTime() and self.CommonColors["Team_Murderer"] or self.CommonColors["Team_Spectator"]
-
 					local ft,fh = draw.GetFontHeight("MersText1"),draw.GetFontHeight("MersHead1")
 					drawTextShadow(but:GetDescription(),"MersHead1",sp.x,sp.y,col,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 					local text

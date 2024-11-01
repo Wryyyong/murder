@@ -40,11 +40,9 @@ function GM:CheckRoundTime()
 	local time = self:GetRoundTime()
 	time = max - time
 
-	if time <= 0 then
-		-- Ran out of time
+	if time <= 0 then -- Ran out of time
 		return false
-	else
-		-- Still got time
+	else -- Still got time
 		return true
 	end
 end
@@ -242,11 +240,10 @@ function GM:EndTheRound(reason,murderer)
 
 	net.Start("DeclareWinner")
 	net.WriteUInt(reason,2)
-
 	local plyIdxBits = math.ceil(math.log(game.MaxPlayers(),2))
 	local isMurdererHere = IsValid(murderer)
-
 	net.WriteBool(isMurdererHere)
+
 	if isMurdererHere then
 		net.WriteUInt(murderer:EntIndex() - 1,plyIdxBits)
 	end
@@ -265,6 +262,7 @@ function GM:EndTheRound(reason,murderer)
 			local oldTeam = ply:Team()
 			ply:SetTeam(1)
 			GAMEMODE:PlayerOnChangeTeam(ply,1,oldTeam)
+
 			local msgs = Translator:AdvVarTranslate(translate.teamMovedAFK,{
 				player = {
 					text = ply:Nick(),
@@ -305,6 +303,7 @@ function GM:EndTheRound(reason,murderer)
 end
 
 local NotEnoughPlayersColor = Color(255,150,50)
+
 function GM:StartNewRound()
 	local players = team.GetPlayers(2)
 

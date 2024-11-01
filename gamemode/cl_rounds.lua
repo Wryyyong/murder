@@ -37,7 +37,6 @@ net.Receive("SetRound",function()
 	if roundState == GAMEMODE.Round.Playing then
 		timer.Simple(0.2,function()
 			local lply = LocalPlayer()
-
 			lply:EmitSound("StartRoundScream")
 		end)
 
@@ -49,7 +48,6 @@ end)
 net.Receive("DeclareWinner",function()
 	local data = {}
 	local plyIdxBits = math.ceil(math.log(game.MaxPlayers(),2))
-
 	data.reason = net.ReadUInt(2)
 	data.murderer = {}
 
@@ -78,18 +76,15 @@ net.Receive("DeclareWinner",function()
 		local t = {}
 		t.ply = Entity(net.ReadUInt(plyIdxBits) + 1)
 		t.lootCount = net.ReadUInt(8)
-
 		if not IsValid(t.ply) then continue end
 		t.color = t.ply:GetPlayerColor():ToColor()
 		t.byName = t.ply:GetBystanderName()
 		t.realName = t.ply:GetName()
-
 		data.collectedLoot[#data.collectedLoot + 1] = t
 	end
 
 	GAMEMODE:DisplayEndRoundBoard(data)
 	local pitch = math.random(80,120)
-
 	LocalPlayer():EmitSound("ambient/alarms/warningbell1.wav",100,pitch)
 end)
 

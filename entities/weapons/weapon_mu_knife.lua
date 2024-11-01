@@ -1,22 +1,21 @@
 if SERVER then
 	util.AddNetworkString("mu_knife_charge")
+
 	SWEP.KnifeChargeConvar = CreateConVar("mu_knife_charge",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Should we use a charge bar on alt attack?",0,1)
 else
 	killicon.AddFont("weapon_mu_knife","HL2MPTypeDeath","5",Color(0,0,255))
-
 	local KnifeTextColor = Color(255,150,0)
 	local KnifeHeaderColor = Color(255,50,50)
+
 	function SWEP:DrawWeaponSelection(x,y,w,h,alpha)
 		local name = translate and translate.knife or "Knife"
 		local nameTrim1 = name:sub(2)
 		local nameTrim2 = name:sub(1,1)
-
 		surface.SetFont("MersText1")
 		local tw = surface.GetTextSize(nameTrim1)
 		surface.SetFont("MersHead1")
 		local twf = surface.GetTextSize(nameTrim2)
 		tw = tw + twf + 1
-
 		KnifeTextColor.a = alpha
 		KnifeHeaderColor.a = alpha
 		draw.DrawText(nameTrim1,"MersText1",x + w * 0.5 - tw / 2 + twf + 1,y + h * 0.51,KnifeTextColor,0)
@@ -88,6 +87,7 @@ end
 function SWEP:Holster()
 	if SERVER then
 		local owner = self:GetOwner()
+
 		if IsValid(owner) then
 			net.Start("mu_knife_charge")
 			net.WriteEntity(self)
@@ -122,6 +122,7 @@ function SWEP:Think()
 	end
 
 	local owner = self:GetOwner()
+
 	if SERVER and self.ChargeStart and (not IsValid(owner) or not owner:KeyDown(IN_ATTACK2)) then
 		if IsValid(owner) then
 			self:ThrowKnife(self:GetCharge())
@@ -165,8 +166,10 @@ local TraceBase = {
 	["mins"] = Vector(-10,-10,-10),
 	["maxs"] = Vector(10,10,10)
 }
+
 function SWEP:AttackTrace()
 	local owner = self:GetOwner()
+
 	if owner:IsPlayer() then
 		owner:LagCompensation(true)
 	end
@@ -248,6 +251,7 @@ function SWEP:GetCharge()
 end
 
 local BaseVel,BaseAng = Vector(0,1500,0),Angle(-28,0,0)
+
 function SWEP:ThrowKnife(force)
 	local ent = ents.Create("mu_knife")
 	local owner = self:GetOwner()

@@ -68,13 +68,7 @@ function GM:SpawnLootItem(data)
 end
 
 function GM:LootThink()
-	if not (
-		self:GetRound() == 1 and
-		self.ActiveLoot < #LootItems and
-		self.NextSpawnLoot < CurTime() and
-		self:SpawnLootItem(LootItems[math.random(1,#LootItems)])
-	) then return end
-
+	if not (self:GetRound() == 1 and self.ActiveLoot < #LootItems and self.NextSpawnLoot < CurTime() and self:SpawnLootItem(LootItems[math.random(1,#LootItems)])) then return end
 	self.NextSpawnLoot = CurTime() + math.random(15,30)
 end
 
@@ -189,7 +183,7 @@ concommand.Add("mu_loot_add",function(ply,_,args,_)
 	ply:ChatPrint("Added " .. #LootItems .. ": " .. getLootPrintString(data,ply:GetPos()))
 	GAMEMODE:SaveLootData()
 	local ent = GAMEMODE:SpawnLootItem(data)
-	local mins = ent:OBBMins(),ent:OBBMaxs()
+	local mins = ent:OBBMins()
 	local pos = ent:GetPos()
 	pos.z = pos.z - mins.z
 	ent:SetPos(pos)
@@ -265,6 +259,7 @@ end)
 local MdlColor = Color(255,125,255)
 local PosColor = Color(200,0,0)
 local AngColor = Color(255,244,0)
+
 concommand.Add("mu_whats_this",function(ply)
 	if not ply:IsAdmin() then return end
 	local ent = ply:GetEyeTrace().Entity

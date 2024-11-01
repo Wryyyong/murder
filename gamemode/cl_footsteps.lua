@@ -16,7 +16,6 @@ local maxDistance = 600 ^ 2
 
 local function renderfoot(gmTbl)
 	if #FootSteps == 0 then return end
-
 	cam.Start3D(EyePos(),EyeAngles())
 	render.SetMaterial(footMat)
 	-- local pos = EyePos()
@@ -37,12 +36,12 @@ end
 
 function GM:DrawFootprints()
 	local errored,retval = pcall(renderfoot,self)
-
 	if errored then return end
 	ErrorNoHalt(retval)
 end
 
 local TraceVectorStart = Vector(0,0,-10)
+
 function GM:AddFootstep(ply,pos,ang,foot)
 	ang.p = 0
 	ang.r = 0
@@ -55,6 +54,7 @@ function GM:AddFootstep(ply,pos,ang,foot)
 	end
 
 	ply.LastFoot = not ply.LastFoot
+
 	local tr = util.TraceLine({
 		["start"] = fpos,
 		["endpos"] = fpos + TraceVectorStart,
@@ -72,6 +72,7 @@ function GM:AddFootstep(ply,pos,ang,foot)
 		["normal"] = tr.HitNormal,
 		["col"] = ply:GetPlayerColor():ToColor()
 	}
+
 	FootSteps[#FootSteps + 1] = tbl
 end
 

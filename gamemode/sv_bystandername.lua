@@ -101,8 +101,8 @@ function GM:LoadBystanderNames()
 
 	if text then
 		local tbl = {}
-		--local i = 1
 
+		--local i = 1
 		for line in text:gmatch("[^\r\n]+") do
 			local name,sex = line:match("([^,]+)/([^,]+)")
 

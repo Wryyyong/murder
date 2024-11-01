@@ -41,7 +41,9 @@ end
 
 function SWEP:DoPrimaryAttackEffect(stats)
 	local owner = self:GetOwner()
-	local bullet = { -- Set up the shot
+
+	-- Set up the shot
+	local bullet = {
 		["Num"] = self.Primary.NumShots or 1,
 		["Src"] = owner:GetShootPos(),
 		["Dir"] = owner:GetAimVector(),
@@ -50,5 +52,6 @@ function SWEP:DoPrimaryAttackEffect(stats)
 		["Force"] = self.Primary.Force or (self.Primary.Damage or 1) * 3,
 		["Damage"] = stats.damage or 1
 	}
+
 	owner:FireBullets(bullet)
 end
