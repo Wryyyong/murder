@@ -1,30 +1,5 @@
 if SERVER then
 	AddCSLuaFile()
-	util.AddNetworkString("mers_base_holdtype")
-
-	concommand.Add("mers_weapon_info",function(ply)
-		local wep = ply:GetActiveWeapon()
-		local vm = ply:GetViewModel()
-		local ct = ChatText()
-
-		for i = 0,vm:GetSequenceCount() - 1 do
-			ct:Add(i .. "\t" .. vm:GetSequenceName(i) .. "\t" .. vm:SequenceDuration(i) .. "\n")
-		end
-
-		for k,v in pairs(wep.Primary) do
-			ct:Add(tostring(k) .. "\t" .. tostring(v) .. "\n")
-		end
-
-		ct:Send(ply)
-	end)
-else
-	net.Receive("mers_base_holdtype",function()
-		local wep = net.ReadEntity()
-
-		if IsValid(wep) and wep:IsWeapon() and wep.SetWeaponHoldType then
-			wep:SetWeaponHoldType(net.ReadString())
-		end
-	end)
 end
 
 SWEP.Base = "weapon_base"
@@ -38,7 +13,7 @@ SWEP.Author = "Mechanical Mind"
 SWEP.Contact = ""
 SWEP.Purpose = ""
 SWEP.Instructions = ""
-SWEP.ViewModelFOV = 50
+SWEP.ViewModelFOV = 90
 SWEP.HolsterHoldTime = 0.3
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = 0
@@ -50,36 +25,9 @@ SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 
 function SWEP:Initialize()
+	self:SetHoldType(self.HoldType or "normal")
 	self:SetWeaponState("holster")
-	self:CalculateHoldType()
-	self.HolsterPercent = 1
 	self.IronsightsPercent = 0
-end
-
-function SWEP:SetNetHoldType(name)
-	self:SetWeaponHoldType(name)
-
-	if SERVER then
-		net.Start("mers_base_holdtype")
-		net.WriteEntity(self)
-		net.WriteString(name)
-		net.Broadcast()
-	end
-end
-
-function SWEP:CalculateHoldType()
-	local holdtype = self.HoldType
-
-	-- crouching in passive holdtype looks wierd, use smg instead
-	local owner = self:GetOwner()
-	if holdtype == "passive" and IsValid(owner) and owner:Crouching() then
-		holdtype = self.HoldType or "smg"
-	end
-
-	if self.OldHoldType ~= holdtype then
-		self.OldHoldType = holdtype
-		self:SetNetHoldType(holdtype)
-	end
 end
 
 function SWEP:SetupDataTables()
@@ -90,9 +38,11 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:IsIdle()
-	if self:GetReloadEnd() > 0 and self:GetReloadEnd() >= CurTime() then return false end
-	if self:GetNextPrimaryFire() > 0 and self:GetNextPrimaryFire() >= CurTime() then return false end
-	if self:GetDrawEnd() > 0 and self:GetDrawEnd() >= CurTime() then return false end
+	if
+		(self:GetReloadEnd() > 0 and self:GetReloadEnd() >= CurTime()) or
+		(self:GetNextPrimaryFire() > 0 and self:GetNextPrimaryFire() >= CurTime()) or
+		(self:GetDrawEnd() > 0 and self:GetDrawEnd() >= CurTime())
+	then return false end
 
 	return true
 end
@@ -179,8 +129,6 @@ local function lerp(from,to,step)
 end
 
 function SWEP:Think()
-	self:CalculateHoldType()
-
 	local owner = self:GetOwner()
 	if self:GetReloadEnd() > 0 and self:GetReloadEnd() < CurTime() then
 		self:SetReloadEnd(0)
@@ -243,7 +191,6 @@ end
 
 function SWEP:Deploy()
 	self:SetWeaponState("normal")
-	self:CalculateHoldType()
 	local time = 1
 	local vm = self:GetOwner():GetViewModel()
 
@@ -263,6 +210,8 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
+	self:SetWeaponState("holster")
+
 	return true
 end
 

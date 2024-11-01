@@ -1,7 +1,5 @@
-if SERVER then
-	AddCSLuaFile()
-else
-	function SWEP:DrawWeaponSelection(x,y,w,h,alpha)
+if CLIENT then
+	function SWEP:DrawWeaponSelection()
 	end
 end
 
@@ -10,8 +8,9 @@ SWEP.Slot = 1
 SWEP.SlotPos = 1
 SWEP.DrawAmmo = true
 SWEP.DrawCrosshair = true
-SWEP.ViewModel = "models/weapons/c_357.mdl"
-SWEP.WorldModel = "models/weapons/w_357.mdl"
+SWEP.ViewModel = Model("models/weapons/c_357.mdl")
+SWEP.WorldModel = Model("models/weapons/w_357.mdl")
+SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.HoldType = "revolver"
 SWEP.SequenceDraw = "draw"
@@ -31,7 +30,7 @@ SWEP.Primary.Recoil = 9
 SWEP.Primary.InfiniteAmmo = true
 SWEP.Primary.AutoReload = true
 SWEP.ReloadSequence = "reload"
-SWEP.ReloadSound = Sound("Weapon_357.Reload")
+SWEP.ReloadSound = "weapons/357/357_reload1.wav"
 SWEP.PrintName = translate and translate.magnum or "Magnum"
 
 function SWEP:Initialize()
@@ -41,13 +40,15 @@ function SWEP:Initialize()
 end
 
 function SWEP:DoPrimaryAttackEffect(stats)
-	local bullet = {} -- Set up the shot
-	bullet.Num = self.Primary.NumShots or 1
-	bullet.Src = self.Owner:GetShootPos()
-	bullet.Dir = self.Owner:GetAimVector()
-	bullet.Spread = Vector(stats.cone or 0,stats.cone or 0,0)
-	bullet.Tracer = 1
-	bullet.Force = self.Primary.Force or (self.Primary.Damage or 1) * 3
-	bullet.Damage = stats.damage or 1
-	self.Owner:FireBullets(bullet)
+	local owner = self:GetOwner()
+	local bullet = { -- Set up the shot
+		["Num"] = self.Primary.NumShots or 1,
+		["Src"] = owner:GetShootPos(),
+		["Dir"] = owner:GetAimVector(),
+		["Spread"] = Vector(stats.cone or 0,stats.cone or 0,0),
+		["Tracer"] = 1,
+		["Force"] = self.Primary.Force or (self.Primary.Damage or 1) * 3,
+		["Damage"] = stats.damage or 1
+	}
+	owner:FireBullets(bullet)
 end

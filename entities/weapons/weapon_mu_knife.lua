@@ -1,16 +1,15 @@
 if SERVER then
-	AddCSLuaFile()
 	util.AddNetworkString("mu_knife_charge")
-	SWEP.KnifeChargeConvar = CreateConVar("mu_knife_charge",1,bit.bor(FCVAR_NOTIFY),"Should we use a charge bar on alt attack?")
+	SWEP.KnifeChargeConvar = CreateConVar("mu_knife_charge",1,{FCVAR_ARCHIVE,FCVAR_NOTIFY},"Should we use a charge bar on alt attack?",0,1)
 else
 	killicon.AddFont("weapon_mu_knife","HL2MPTypeDeath","5",Color(0,0,255,255))
 
 	function SWEP:DrawWeaponSelection(x,y,w,h,alpha)
 		local name = translate and translate.knife or "Knife"
 		surface.SetFont("MersText1")
-		local tw,th = surface.GetTextSize(name:sub(2))
+		local tw = surface.GetTextSize(name:sub(2))
 		surface.SetFont("MersHead1")
-		local twf,thf = surface.GetTextSize(name:sub(1,1))
+		local twf = surface.GetTextSize(name:sub(1,1))
 		tw = tw + twf + 1
 		draw.DrawText(name:sub(2),"MersText1",x + w * 0.5 - tw / 2 + twf + 1,y + h * 0.51,Color(255,150,0,alpha),0)
 		draw.DrawText(name:sub(1,1),"MersHead1",x + w * 0.5 - tw / 2,y + h * 0.49,Color(255,50,50,alpha),0)
@@ -29,10 +28,10 @@ else
 		end
 	end
 
-	net.Receive("mu_knife_charge",function(len)
+	net.Receive("mu_knife_charge",function()
 		local ent = net.ReadEntity()
 		if not IsValid(ent) then return end
-		local charging = net.ReadUInt(8) ~= 0
+		local charging = net.ReadBool()
 
 		if charging then
 			ent.ChargeStart = net.ReadDouble()
@@ -47,10 +46,9 @@ SWEP.Slot = 1
 SWEP.SlotPos = 1
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
-SWEP.ViewModel = "models/weapons/v_knife_t.mdl"
-SWEP.WorldModel = "models/weapons/w_knife_t.mdl"
+SWEP.ViewModel = Model("models/weapons/v_knife_t.mdl")
+SWEP.WorldModel = Model("models/weapons/w_knife_t.mdl")
 SWEP.ViewModelFlip = false
-SWEP.ViewModelFOV = 65
 SWEP.HoldType = "knife"
 SWEP.SequenceDraw = "draw"
 SWEP.SequenceIdle = "idle"
@@ -81,11 +79,12 @@ end
 
 function SWEP:Holster()
 	if SERVER then
-		if IsValid(self.Owner) then
+		local owner = self:GetOwner()
+		if IsValid(owner) then
 			net.Start("mu_knife_charge")
 			net.WriteEntity(self)
-			net.WriteUInt(0,8)
-			net.Send(self.Owner)
+			net.WriteBool(false)
+			net.Send(owner)
 		end
 
 		self.ChargeStart = nil
@@ -114,27 +113,27 @@ function SWEP:Think()
 		end
 	end
 
-	if SERVER and self.ChargeStart then
-		if not IsValid(self.Owner) or not self.Owner:KeyDown(IN_ATTACK2) then
-			if IsValid(self.Owner) then
-				self:ThrowKnife(self:GetCharge())
-				net.Start("mu_knife_charge")
-				net.WriteEntity(self)
-				net.WriteUInt(0,8)
-				net.Send(self.Owner)
-			end
-
-			self.ChargeStart = nil
+	local owner = self:GetOwner()
+	if SERVER and self.ChargeStart and (not IsValid(owner) or not owner:KeyDown(IN_ATTACK2)) then
+		if IsValid(owner) then
+			self:ThrowKnife(self:GetCharge())
+			net.Start("mu_knife_charge")
+			net.WriteEntity(self)
+			net.WriteBool(false)
+			net.Send(owner)
 		end
+
+		self.ChargeStart = nil
 	end
 end
 
 function SWEP:GetTrace(left,up)
 	local trace = {}
-	trace.filter = self.Owner
-	trace.start = self.Owner:GetShootPos()
+	local owner = self:GetOwner()
+	trace.filter = owner
+	trace.start = owner:GetShootPos()
 	trace.mask = MASK_SHOT_HULL
-	local ang = self.Owner:GetAimVector():Angle()
+	local ang = owner:GetAimVector():Angle()
 
 	if left then
 		ang:RotateAroundAxis(ang:Up(),left)
@@ -154,19 +153,20 @@ function SWEP:GetTrace(left,up)
 end
 
 function SWEP:AttackTrace()
-	if self.Owner:IsPlayer() then
-		self.Owner:LagCompensation(true)
+	local owner = self:GetOwner()
+	if owner:IsPlayer() then
+		owner:LagCompensation(true)
 	end
 
 	local trace = {}
-	trace.filter = self.Owner
-	trace.start = self.Owner:GetShootPos()
+	trace.filter = owner
+	trace.start = owner:GetShootPos()
 	trace.mask = MASK_SHOT_HULL
-	trace.endpos = trace.start + self.Owner:GetAimVector() * self:GetFistRange()
+	trace.endpos = trace.start + owner:GetAimVector() * self:GetFistRange()
 	trace.mins = Vector(-10,-10,-10)
 	trace.maxs = Vector(10,10,10)
 	local tr = util.TraceHull(trace)
-	tr.TraceAimVector = self.Owner:GetAimVector()
+	tr.TraceAimVector = owner:GetAimVector()
 
 	-- aim around
 	if not IsValid(tr.Entity) then
@@ -191,22 +191,22 @@ function SWEP:AttackTrace()
 
 	if tr.Hit then
 		if IsValid(tr.Entity) then
-			if CLIENT and LocalPlayer() == self.Owner then
+			if CLIENT and LocalPlayer() == owner then
 				self:EmitSound("Weapon_Crowbar.Melee_Hit")
 			end
 
 			local dmg = DamageInfo()
 			dmg:SetDamage(self.Primary.Damage or 1)
-			dmg:SetAttacker(self.Owner)
-			dmg:SetInflictor(self.Weapon or self)
-			dmg:SetDamageForce(self.Owner:GetAimVector() * self.Primary.Force)
+			dmg:SetAttacker(owner)
+			dmg:SetInflictor(self)
+			dmg:SetDamageForce(owner:GetAimVector() * self.Primary.Force)
 			dmg:SetDamagePosition(tr.HitPos)
 			dmg:SetDamageType(DMG_SLASH)
 			tr.Entity:DispatchTraceAttack(dmg,tr)
 
-			if tr.Entity ~= self and tr.Entity ~= self.Owner and (tr.Entity:IsPlayer() or tr.Entity:GetClass() == "prop_ragdoll") then
+			if tr.Entity ~= self and tr.Entity ~= owner and (tr.Entity:IsPlayer() or tr.Entity:GetClass() == "prop_ragdoll") then
 				local edata = EffectData()
-				edata:SetStart(self.Owner:GetShootPos())
+				edata:SetStart(owner:GetShootPos())
 				edata:SetOrigin(tr.HitPos)
 				edata:SetNormal(tr.Normal)
 				edata:SetEntity(tr.Entity)
@@ -217,13 +217,13 @@ function SWEP:AttackTrace()
 		end
 	else
 		-- only play the sound for the murderer
-		if CLIENT and LocalPlayer() == self.Owner then
+		if CLIENT and LocalPlayer() == owner then
 			self:EmitSound("Weapon_Crowbar.Single")
 		end
 	end
 
-	if self.Owner:IsPlayer() then
-		self.Owner:LagCompensation(false)
+	if owner:IsPlayer() then
+		owner:LagCompensation(false)
 	end
 end
 
@@ -235,14 +235,15 @@ end
 
 function SWEP:ThrowKnife(force)
 	local ent = ents.Create("mu_knife")
-	ent:SetOwner(self.Owner)
-	ent:SetPos(self.Owner:GetShootPos())
-	local knife_ang = Angle(-28,0,0) + self.Owner:EyeAngles()
+	local owner = self:GetOwner()
+	ent:SetOwner(owner)
+	ent:SetPos(owner:GetShootPos())
+	local knife_ang = Angle(-28,0,0) + owner:EyeAngles()
 	knife_ang:RotateAroundAxis(knife_ang:Right(),-90)
 	ent:SetAngles(knife_ang)
 	ent:Spawn()
 	local phys = ent:GetPhysicsObject()
-	phys:SetVelocity(self.Owner:GetAimVector() * (force * 1000 + 200))
+	phys:SetVelocity(owner:GetAimVector() * (force * 1000 + 200))
 	phys:AddAngleVelocity(Vector(0,1500,0))
 	self:Remove()
 end
@@ -255,9 +256,9 @@ function SWEP:SecondaryAttack()
 			self.ChargeStart = CurTime()
 			net.Start("mu_knife_charge")
 			net.WriteEntity(self)
-			net.WriteUInt(1,8)
+			net.WriteBool(true)
 			net.WriteDouble(self.ChargeStart)
-			net.Send(self.Owner)
+			net.Send(self:GetOwner())
 		else
 			self:ThrowKnife(0.6)
 		end
@@ -271,8 +272,8 @@ function SWEP:Reload()
 		if SERVER then
 			net.Start("mu_knife_charge")
 			net.WriteEntity(self)
-			net.WriteUInt(0,8)
-			net.Send(self.Owner)
+			net.WriteBool(false)
+			net.Send(self:GetOwner())
 		end
 
 		return

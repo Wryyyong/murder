@@ -1,9 +1,6 @@
-if SERVER then
-	AddCSLuaFile()
-else
-	function SWEP:DrawWeaponSelection(x,y,w,h,alpha)
+if CLIENT then
+	function SWEP:DrawWeaponSelection()
 	end
-	-- draw.DrawText("Hands","Default",x + w * 0.44,y + h * 0.20,Color(0,50,200,alpha),1)
 end
 
 SWEP.Base = "weapon_mers_base"
@@ -11,7 +8,7 @@ SWEP.Slot = 0
 SWEP.SlotPos = 1
 SWEP.DrawAmmo = true
 SWEP.DrawCrosshair = true
-SWEP.ViewModel = "models/weapons/c_arms.mdl"
+SWEP.ViewModel = ""
 SWEP.WorldModel = ""
 SWEP.ViewModelFlip = false
 SWEP.HoldType = "normal"
@@ -33,7 +30,7 @@ local function addangle(ang,ang2)
 	ang:RotateAroundAxis(ang:Right(),ang2.p) -- pitch
 end
 
-function SWEP:CalcViewModelView(vm,opos,oang,pos,ang)
+function SWEP:CalcViewModelView(_,_,_,pos,ang)
 	-- iron sights
 	local pos2 = Vector(-35,0,0)
 	addangle(ang,Angle(-90,0,0))
@@ -61,7 +58,7 @@ end
 function SWEP:SecondaryAttack()
 	if SERVER then
 		self:SetCarrying()
-		local tr = self.Owner:GetEyeTraceNoCursor()
+		local tr = self:GetOwner():GetEyeTraceNoCursor()
 
 		if IsValid(tr.Entity) and self:CanPickup(tr.Entity) then
 			self:SetCarrying(tr.Entity,tr.PhysicsBone)
@@ -71,7 +68,8 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:ApplyForce()
-	local target = self.Owner:GetAimVector() * 30 + self.Owner:GetShootPos()
+	local owner = self:GetOwner()
+	local target = owner:GetAimVector() * 30 + owner:GetShootPos()
 	local phys = self.CarryEnt:GetPhysicsObjectNum(self.CarryBone)
 
 	if IsValid(phys) then
@@ -106,13 +104,14 @@ function SWEP:SetCarrying(ent,bone)
 		self.CarryBone = nil
 	end
 
-	self.Owner:CalculateSpeed()
+	self:GetOwner():CalculateSpeed()
 end
 
 function SWEP:Think()
 	self.BaseClass.Think(self)
 
-	if IsValid(self.Owner) and self.Owner:KeyDown(IN_ATTACK2) then
+	local owner = self:GetOwner()
+	if IsValid(owner) and owner:KeyDown(IN_ATTACK2) then
 		if IsValid(self.CarryEnt) then
 			self:ApplyForce()
 		end
@@ -122,7 +121,12 @@ function SWEP:Think()
 end
 
 function SWEP:PrimaryAttack()
+	local owner = self:GetOwner()
 	if SERVER then
-		if IsValid(self.Owner) then end -- Disabled until https://github.com/Facepunch/garrysmod-issues/issues/2668 is fixed -- if self.Owner:HasWeapon("weapon_mu_knife") then -- 	self.Owner:SelectWeapon("weapon_mu_knife") -- elseif self.Owner:HasWeapon("weapon_mu_magnum") then -- 	self.Owner:SelectWeapon("weapon_mu_magnum") -- end
+		if owner:HasWeapon("weapon_mu_knife") then
+			owner:SelectWeapon("weapon_mu_knife")
+		elseif owner:HasWeapon("weapon_mu_magnum") then
+			owner:SelectWeapon("weapon_mu_magnum")
+		end
 	end
 end
