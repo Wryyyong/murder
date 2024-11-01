@@ -54,12 +54,19 @@ net.Receive("DeclareWinner",function()
 	data.murderer = {}
 
 	if net.ReadBool() then
-		data.murderer.ent = Entity(net.ReadUInt(plyIdxBits) + 1)
-		data.murderer.color = data.murderer:GetPlayerColor():ToColor()
-		data.murderer.byName = data.murderer:GetBystanderName()
-		data.murderer.realName = " (" .. data.murderer:GetName() .. ")"
+		data.murderer.ply = Entity(net.ReadUInt(plyIdxBits) + 1)
+
+		if IsValid(data.murderer.ply) then
+			data.murderer.color = data.murderer.ply:GetPlayerColor():ToColor()
+			data.murderer.byName = data.murderer.ply:GetBystanderName()
+			data.murderer.realName = " (" .. data.murderer.ply:GetName() .. ")"
+		else
+			data.murderer.color = color_white
+			data.murderer.byName = "unknown"
+			data.murderer.realName = ""
+		end
 	else
-		data.murderer.ent = Entity(0)
+		data.murderer.ply = Entity(0)
 		data.murderer.color = color_white
 		data.murderer.byName = "unknown"
 		data.murderer.realName = ""
@@ -69,16 +76,15 @@ net.Receive("DeclareWinner",function()
 
 	while net.ReadBool() do
 		local t = {}
-		t.ent = net.ReadEntity()
+		t.ply = Entity(net.ReadUInt(plyIdxBits) + 1)
 		t.lootCount = net.ReadUInt(8)
 
-		if IsValid(t.ent) then
-			t.color = t.ent:GetPlayerColor():ToColor()
-			t.byName = t.ent:GetBystanderName()
-			t.realName = t.ent:GetName()
-		end
+		if not IsValid(t.ply) then continue end
+		t.color = t.ply:GetPlayerColor():ToColor()
+		t.byName = t.ply:GetBystanderName()
+		t.realName = t.ply:GetName()
 
-		table.insert(data.collectedLoot,t)
+		data.collectedLoot[#data.collectedLoot + 1] = t
 	end
 
 	GAMEMODE:DisplayEndRoundBoard(data)

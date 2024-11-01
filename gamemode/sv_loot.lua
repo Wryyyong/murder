@@ -61,24 +61,21 @@ function GM:SpawnLootItem(data)
 	ent:SetAngles(data.angle)
 	ent:Spawn()
 	ent.LootData = data
+	self.ActiveLoot = math.Clamp(self.ActiveLoot + 1,0,#LootItems)
 	-- print(data.pos, data.model, ent)
 
 	return ent
 end
 
 function GM:LootThink()
-	if not (self:GetRound() == 1 and self.NextSpawnLoot > CurTime()) then return end
+	if not (
+		self:GetRound() == 1 and
+		self.ActiveLoot < #LootItems and
+		self.NextSpawnLoot < CurTime() and
+		self:SpawnLootItem(LootItems[math.random(1,#LootItems)])
+	) then return end
 
-	timer.Simple(3,function()
-		local spawnSuccess
-		repeat
-			local data = LootItems[math.random(1,#LootItems)]
-			if not data then continue end
-			spawnSuccess = self:SpawnLootItem(data)
-		until spawnSuccess
-
-		self.NextSpawnLoot = CurTime() + math.random(15,30)
-	end)
+	self.NextSpawnLoot = CurTime() + math.random(15,30)
 end
 
 function GM:SaveLootData()
@@ -133,6 +130,7 @@ function GM:PlayerPickupLoot(ply,ent)
 
 	ply:EmitSound("ambient/levels/canals/windchime2.wav",100,math.random(40,160))
 	ent:Remove()
+	self.ActiveLoot = math.Clamp(self.ActiveLoot - 1,0,#LootItems)
 	net.Start("GrabLoot")
 	net.WriteUInt(ply.LootCollected,8)
 	net.Send(ply)

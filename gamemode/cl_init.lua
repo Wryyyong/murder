@@ -105,50 +105,51 @@ function GM:PostDrawTranslucentRenderables()
 	self:DrawFootprints()
 end
 
-local HaloColors = {Color(0,220,0),Color(220,0,0),Color(0,0,255)}
+local HaloColors = {Color(0,220,0),Color(220,0,0),Color(0,110,220)}
 
 function GM:PreDrawMurderHalos(Add)
 	local client = LocalPlayer()
 	if not (IsValid(client) and client:Alive() and self.HaloRender:GetBool()) then return end
 
-	local halos = {}
+	local LootHalos = {}
+	local WeaponHalos = {}
 
 	if self.HaloRenderLoot:GetBool() then
 		for _,v in pairs(ents.FindByClass("weapon_mu_magnum")) do
 			if IsValid(v.Owner) then continue end
-			table.insert(halos,{
-				ent = v,
-				color = 3
-			})
+			WeaponHalos[#WeaponHalos + 1] = {
+				["ent"] = v,
+				["color"] = 3
+			}
 		end
 
 		for _,v in pairs(ents.FindByClass("mu_loot")) do
-			table.insert(halos,{
-				ent = v,
-				color = 1
-			})
+			LootHalos[#LootHalos + 1] = {
+				["ent"] = v,
+				["color"] = 1
+			}
 		end
 	end
 
 	if self:GetAmMurderer() and self.HaloRenderKnife:GetBool() then
 		for _,v in pairs(ents.FindByClass("weapon_mu_knife")) do
-			if IsValid(v.Owner) then continue end
-			table.insert(halos,{
-				ent = v,
-				color = 2
-			})
+			if IsValid(v:GetOwner()) then continue end
+			WeaponHalos[#WeaponHalos + 1] = {
+				["ent"] = v,
+				["color"] = 2
+			}
 		end
 
 		for _,v in pairs(ents.FindByClass("mu_knife")) do
-			table.insert(halos,{
-				ent = v,
-				color = 2
-			})
+			WeaponHalos[#WeaponHalos + 1] = {
+				["ent"] = v,
+				["color"] = 2
+			}
 		end
 	end
 
-	if #halos > 0 then return end
-	Add(halos,HaloColors,5,5,5,true,false)
+	Add(LootHalos,HaloColors,5,5,5,true,false)
+	Add(WeaponHalos,HaloColors,2,2,10,true,false)
 end
 
 net.Receive("mu_tker",function()

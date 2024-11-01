@@ -95,7 +95,7 @@ function GM:DisplayEndRoundBoard(data)
 	desc:SetTextColor(color_white)
 	local lootList = vgui.Create("DPanelList",lootPnl)
 	lootList:Dock(FILL)
-	table.sort(data.collectedLoot,function(a,b) return a.count > b.count end)
+	table.sort(data.collectedLoot,function(a,b) return a.lootCount > b.lootCount end)
 
 	for _,v in pairs(data.collectedLoot) do
 		if not v.realName then continue end
@@ -130,8 +130,8 @@ function GM:DisplayEndRoundBoard(data)
 		end
 
 		function name:DoClick()
-			if IsValid(v.ent) then
-				GAMEMODE:DoScoreboardActionPopup(v.ent)
+			if IsValid(v.ply) then
+				GAMEMODE:DoScoreboardActionPopup(v.ply)
 			end
 		end
 

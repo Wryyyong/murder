@@ -388,6 +388,7 @@ function GM:StartNewRound()
 	self:SetRound(self.Round.Playing)
 	self.RoundStarted = curTime
 	self.NextSpawnLoot = curTime
+	self.ActiveLoot = 0
 	hook.Run("OnStartRound")
 end
 

@@ -30,14 +30,14 @@ end
 
 function GM:RenderSpectate()
 	if self:IsCSpectating() then
-		local textpos = ScrW() / 2,ScrH() - 30 - draw.GetFontHeight("MersRadial")
-		drawTextShadow(translate.spectating,"MersRadial",textpos * 2,self.CommonColors["Team_Bystander"],1)
+		local textposW,testposH = ScrW() / 2,ScrH() - 30 - draw.GetFontHeight("MersRadial")
+		drawTextShadow(translate.spectating,"MersRadial",textposW,testposH * 2,self.CommonColors["Team_Bystander"],1)
 		local client = LocalPlayer()
 		local spectating = self:GetCSpectatee()
 
 		if IsValid(spectating) and spectating:IsPlayer() then
 			if IsValid(client) and client:IsAdmin() then
-				drawTextShadow(spectating:Nick(),"MersRadialSmall",textpos,color_white,1)
+				drawTextShadow(spectating:Nick(),"MersRadialSmall",textposW,testposH,color_white,1)
 			end
 
 			if self.DrawGameHUD and GAMEMODE.ShowSpectateInfo:GetBool() then

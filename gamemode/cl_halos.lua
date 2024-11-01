@@ -17,7 +17,6 @@ local function Add(entTable,colors,blurx,blury,passes,add,ignorez)
 	local t = {
 		Ents = entTable,
 		Colors = colors,
-		Hidden = when_hidden,
 		BlurX = blurx or 2,
 		BlurY = blury or 2,
 		DrawPasses = passes or 1,
@@ -25,7 +24,7 @@ local function Add(entTable,colors,blurx,blury,passes,add,ignorez)
 		IgnoreZ = ignorez
 	}
 
-	table.insert(List,t)
+	List[#List + 1] = t
 end
 
 local function Render(entry)
