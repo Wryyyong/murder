@@ -182,9 +182,8 @@ function GM:DrawGameHUD(ply)
 	if not IsValid(ply) then return end
 	local health = ply:Health()
 	if not IsValid(ply) then return end
-	local shouldDraw = hook.Run("HUDShouldDraw","MurderMurdererFog")
 
-	if shouldDraw ~= false and LocalPlayer() == ply and ply:GetNWBool("MurdererFog") and self:GetAmMurderer() then
+	if hook.Run("HUDShouldDraw","MurderMurdererFog") and LocalPlayer() == ply and ply:GetNWBool("MurdererFog") and self:GetAmMurderer() then
 		surface.SetDrawColor(10,10,10,50)
 		surface.DrawRect(-1,-1,ScrW() + 2,ScrH() + 2)
 		drawTextShadow(translate.murdererFog,"MersRadial",ScrW() * 0.5,ScrH() - 80,Color(90,20,20),1,TEXT_ALIGN_CENTER)
@@ -196,9 +195,8 @@ function GM:DrawGameHUD(ply)
 	-- drawTextShadow("Health", "MersRadial", 20, ScrH() - 10, healthCol, 0, TEXT_ALIGN_BOTTOM)
 	-- drawTextShadow(health, "MersRadialBig", 20 + w + 10, ScrH() - 10 + 3, healthCol, 0, TEXT_ALIGN_BOTTOM)
 	local tr = ply:GetEyeTraceNoCursor()
-	shouldDraw = hook.Run("HUDShouldDraw","MurderTraitorButton")
 
-	if shouldDraw ~= false and self:GetAmMurderer() then
+	if hook.Run("HUDShouldDraw","MurderTraitorButton") and self:GetAmMurderer() then
 		-- find closest button to cursor with usable range
 		local dot,but
 
@@ -257,9 +255,7 @@ function GM:DrawGameHUD(ply)
 		end
 	end
 
-	shouldDraw = hook.Run("HUDShouldDraw","MurderPlayerNames")
-
-	if shouldDraw ~= false then
+	if hook.Run("HUDShouldDraw","MurderPlayerNames") then
 		-- draw names
 		if IsValid(tr.Entity) and (tr.Entity:IsPlayer() or tr.Entity:GetClass() == "prop_ragdoll") and tr.HitPos:Distance(tr.StartPos) < 500 then
 			self.LastLooked = tr.Entity
@@ -275,16 +271,12 @@ function GM:DrawGameHUD(ply)
 		end
 	end
 
-	shouldDraw = hook.Run("HUDShouldDraw","MurderDisguise")
-
-	if shouldDraw ~= false and self:GetAmMurderer() and self.LootCollected and self.LootCollected >= 1 and IsValid(tr.Entity) and tr.Entity:GetClass() == "prop_ragdoll" and tr.HitPos:Distance(tr.StartPos) < 80 and tr.Entity:GetBystanderName() ~= ply:GetBystanderName() or colorDif(tr.Entity:GetPlayerColor(),ply:GetPlayerColor()) > 0.1 then
+	if hook.Run("HUDShouldDraw","MurderDisguise") and self:GetAmMurderer() and self.LootCollected and self.LootCollected >= 1 and IsValid(tr.Entity) and tr.Entity:GetClass() == "prop_ragdoll" and tr.HitPos:Distance(tr.StartPos) < 80 and (tr.Entity:GetBystanderName() ~= ply:GetBystanderName() or colorDif(tr.Entity:GetPlayerColor(),ply:GetPlayerColor()) > 0.1) then
 		local h = draw.GetFontHeight("MersRadial")
 		drawTextShadow(translate.pressEToDisguiseFor1Loot,"MersRadialSmall",ScrW() / 2,ScrH() / 2 + 80 + h * 0.7,color_white,TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 	end
 
-	shouldDraw = hook.Run("HUDShouldDraw","MurderHealthBall")
-
-	if shouldDraw ~= false then
+	if hook.Run("HUDShouldDraw","MurderHealthBall") then
 		-- setup size
 		local size = ScrW() * 0.08
 		-- draw black circle
@@ -309,9 +301,7 @@ function GM:DrawGameHUD(ply)
 		drawTextShadow(ply:GetBystanderName(),"MersRadialSmall",x,ScrH() - size * 1.1,col,0,TEXT_ALIGN_BOTTOM)
 	end
 
-	shouldDraw = hook.Run("HUDShouldDraw","MurderFlashlightCharge")
-
-	if shouldDraw ~= false and LocalPlayer() == ply and (ply:FlashlightIsOn() or self:GetFlashlightCharge() < 1) then
+	if hook.Run("HUDShouldDraw","MurderFlashlightCharge") and LocalPlayer() == ply and (ply:FlashlightIsOn() or self:GetFlashlightCharge() < 1) then
 		local size = ScrW() * 0.08
 		local x = size * 1.2
 		local w = ScrW() * 0.08
@@ -339,9 +329,7 @@ function GM:DrawGameHUD(ply)
 		surface.DrawTexturedRect(x + bord,ScrH() - h - size * 0.2 + bord,(w - bord * 2) * charge,h - bord * 2)
 	end
 
-	shouldDraw = hook.Run("HUDShouldDraw","MurderPlayerType")
-
-	if shouldDraw ~= false then
+	if hook.Run("HUDShouldDraw","MurderPlayerType") then
 		local name = translate.bystander
 		local color = Color(20,120,255)
 
@@ -353,9 +341,7 @@ function GM:DrawGameHUD(ply)
 		drawTextShadow(name,"MersRadial",ScrW() - 20,ScrH() - 10,color,2,TEXT_ALIGN_BOTTOM)
 	end
 
-	shouldDraw = hook.Run("HUDShouldDraw","RoundTime")
-
-	if shouldDraw ~= false then
+	if hook.Run("HUDShouldDraw","RoundTime") then
 		local max = self.RoundSettings.RoundMaxLength
 
 		if max ~= -1 then
