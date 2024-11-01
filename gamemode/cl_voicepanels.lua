@@ -1,5 +1,5 @@
 local PANEL = {}
-local PlayerVoicePanels = {}
+local PlayerVoicePanels = PlayerVoicePanels or {}
 
 function PANEL:Init()
 	self.LabelName = vgui.Create("DLabel",self)
@@ -79,7 +79,11 @@ function PANEL:SetBystanderState(state)
 	self.Bystander = state
 
 	if state then
-		self.LabelName:SetText(self.ply:GetBystanderName())
+		if GAMEMODE:IsCSpectating() then
+			self.LabelName:SetText(self.ply:GetBystanderName() .. " (" .. self.ply:Nick() .. ")")
+		else
+			self.LabelName:SetText(self.ply:GetBystanderName())
+		end
 		self.LabelName:SetTextColor(color)
 		self.ColorBlock:SetVisible(true)
 		self.Avatar:SetVisible(false)
