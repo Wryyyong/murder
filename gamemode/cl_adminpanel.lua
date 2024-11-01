@@ -12,7 +12,7 @@ local function addPlayerItem(self,mlist,ply,pteam)
 	but:SetText("")
 
 	function but:Paint(w,h)
-		local showAdmins = GetConVar("mu_scoreboard_show_admins"):GetBool()
+		local showAdmins = GAMEMODE.ShowAdminsOnScoreboard:GetBool()
 		local col = team.GetColor(pteam)
 
 		if IsValid(ply) then

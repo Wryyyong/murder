@@ -18,10 +18,10 @@ include("cl_adminpanel.lua")
 include("cl_flashlight.lua")
 include("cl_halos.lua")
 include("cl_spawns.lua")
-GM.Debug = CreateClientConVar("mu_debug",0,true,true)
-GM.HaloRender = CreateClientConVar("mu_halo_render",1,true,true) -- should we render halos
-GM.HaloRenderLoot = CreateClientConVar("mu_halo_loot",1,true,true) -- shouuld we render loot halos
-GM.HaloRenderKnife = CreateClientConVar("mu_halo_knife",1,true,true) -- shouuld we render murderer's knife halos
+GM.Debug = CreateClientConVar("mu_debug",0,true,true,"Enable debug info.",0,1)
+GM.HaloRender = CreateClientConVar("mu_halo_render",1,true,true,"Render halos.",0,1) -- should we render halos
+GM.HaloRenderLoot = CreateClientConVar("mu_halo_loot",1,true,true,"Render halos for loot.",0,1) -- shouuld we render loot halos
+GM.HaloRenderKnife = CreateClientConVar("mu_halo_knife",1,true,true,"Render halos for the Murderer's knife.",0,1) -- shouuld we render murderer's knife halos
 
 function GM:Initialize()
 	self:FootStepsInit()
