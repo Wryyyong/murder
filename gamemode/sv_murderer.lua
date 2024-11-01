@@ -9,8 +9,8 @@ function PlayerMeta:SetMurderer(bool)
 		self.MurdererChance = 1
 	end
 
-	net.Start("your_are_a_murderer")
-	net.WriteUInt(bool and 1 or 0,8)
+	net.Start("you_are_a_murderer")
+	net.WriteBool(bool)
 	net.Send(self)
 end
 

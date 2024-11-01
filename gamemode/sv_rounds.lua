@@ -73,14 +73,14 @@ function GM:NetworkRound(ply)
 	net.WriteUInt(self.RoundStage,8)
 	net.WriteDouble(self.RoundTime)
 
-	if self.RoundSettings then
-		net.WriteUInt(1,8)
-		net.WriteUInt(self.RoundSettings.ShowAdminsOnScoreboard and 1 or 0,8)
-		net.WriteUInt(self.RoundSettings.AdminPanelAllowed and 1 or 0,8)
-		net.WriteUInt(self.RoundSettings.ShowSpectateInfo and 1 or 0,8)
+	local roundSettings = self.RoundSettings
+	net.WriteBool(roundSettings)
+
+	if roundSettings then
+		net.WriteBool(self.RoundSettings.ShowAdminsOnScoreboard)
+		net.WriteBool(self.RoundSettings.AdminPanelAllowed)
+		net.WriteBool(self.RoundSettings.ShowSpectateInfo)
 		net.WriteInt(self.RoundSettings.RoundMaxLength,32)
-	else
-		net.WriteUInt(0,8)
 	end
 
 	if self.RoundStage == 5 then
@@ -272,7 +272,7 @@ function GM:EndTheRound(reason,murderer)
 	end
 
 	net.Start("DeclareWinner")
-	net.WriteUInt(reason,8)
+	net.WriteUInt(reason,2)
 
 	if murderer then
 		net.WriteEntity(murderer)
@@ -285,14 +285,14 @@ function GM:EndTheRound(reason,murderer)
 	end
 
 	for _,ply in pairs(team.GetPlayers(2)) do
-		net.WriteUInt(1,8)
+		net.WriteBool(true)
 		net.WriteEntity(ply)
 		net.WriteUInt(ply.LootCollected,32)
 		net.WriteVector(ply:GetPlayerColor())
 		net.WriteString(ply:GetBystanderName())
 	end
 
-	net.WriteUInt(0,8)
+	net.WriteBool(false)
 	net.Broadcast()
 
 	for _,ply in pairs(players) do

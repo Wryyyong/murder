@@ -51,9 +51,7 @@ local function unnetworkList()
 end
 
 net.Receive("Spawns_View",function()
-	local r = net.ReadUInt(8)
-
-	if r == 0 then
+	if net.ReadBool() then
 		GAMEMODE.SpawnsVisualise = nil
 
 		for k,v in pairs(GAMEMODE.Spawns) do

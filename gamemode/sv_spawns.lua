@@ -231,7 +231,7 @@ concommand.Add("mu_spawn_visualise",function(ply,_,args)
 
 	if ply.SpawnsVisualise and ply.SpawnsVisualise == args[1] then
 		net.Start("Spawns_View")
-		net.WriteUInt(0,8)
+		net.WriteBool(true)
 		net.Send(ply)
 		ply:ChatPrint("Stopped visualising spawns: " .. args[1])
 		ply.SpawnsVisualise = nil
@@ -241,7 +241,7 @@ concommand.Add("mu_spawn_visualise",function(ply,_,args)
 
 	ply.SpawnsVisualise = args[1]
 	net.Start("Spawns_View")
-	net.WriteUInt(1,8)
+	net.WriteBool(false)
 	net.WriteString(ply.SpawnsVisualise)
 	networkList(spawnList)
 	net.Send(ply)

@@ -14,16 +14,13 @@ function PlayerMeta:SetTKer(bool)
 				self:DropWeapon(wep)
 			end
 		end)
-
-		net.Start("mu_tker")
-		net.WriteUInt(1,8)
-		net.Send(self)
 	else
 		self.LastTKTime = nil
-		net.Start("mu_tker")
-		net.WriteUInt(0,8)
-		net.Send(self)
 	end
+
+	net.Start("mu_tker")
+	net.WriteBool(bool)
+	net.Send(self)
 
 	self:CalculateSpeed()
 end

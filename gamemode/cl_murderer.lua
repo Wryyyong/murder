@@ -6,7 +6,6 @@ function GM:GetAmMurderer()
 	return self.Murderer
 end
 
-net.Receive("your_are_a_murderer",function()
-	local am = net.ReadUInt(8) ~= 0
-	GAMEMODE:SetAmMurderer(am)
+net.Receive("you_are_a_murderer",function()
+	GAMEMODE:SetAmMurderer(net.ReadBool())
 end)

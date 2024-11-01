@@ -54,7 +54,7 @@ function meta:NetConstructMsg()
 	net.Start("chattext_msg")
 
 	for _,msg in pairs(self.msgs) do
-		net.WriteUInt(1,8)
+		net.WriteBool(true)
 		net.WriteString(msg.text)
 
 		if not msg.color then
@@ -64,7 +64,7 @@ function meta:NetConstructMsg()
 		net.WriteVector(Vector(msg.color.r,msg.color.g,msg.color.b))
 	end
 
-	net.WriteUInt(0,8)
+	net.WriteBool(false)
 
 	return self
 end
@@ -75,29 +75,6 @@ function ChatText(msgs)
 	setmetatable(t,meta)
 
 	return t
-end
-
--- local t = ChatText()
--- t:Add("pants down", Color(255,0,0))
--- t:Add(" pants up")
--- t:SendAll()
-util.AddNetworkString("msg_clients")
-meta = table.Copy(meta) -- Don't comment this out because doing so breaks the gamemode's chat messages
-
-function meta:NetConstructMsg()
-	net.Start("msg_clients")
-
-	for _,line in pairs(self.msgs) do
-		net.WriteUInt(1,8)
-		net.WriteUInt(line.color.r,8)
-		net.WriteUInt(line.color.g,8)
-		net.WriteUInt(line.color.b,8)
-		net.WriteString(line.text)
-	end
-
-	net.WriteUInt(0,8)
-
-	return self
 end
 
 function meta:Print()

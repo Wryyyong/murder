@@ -30,12 +30,12 @@ net.Receive("SetRound",function()
 	GAMEMODE.RoundStage = r
 	GAMEMODE.RoundStart = start
 	GAMEMODE.RoundSettings = {}
-	local settings = net.ReadUInt(8)
+	local settings = net.ReadBool()
 
-	if settings ~= 0 then
-		GAMEMODE.RoundSettings.ShowAdminsOnScoreboard = net.ReadUInt(8) ~= 0
-		GAMEMODE.RoundSettings.AdminPanelAllowed = net.ReadUInt(8) ~= 0
-		GAMEMODE.RoundSettings.ShowSpectateInfo = net.ReadUInt(8) ~= 0
+	if settings then
+		GAMEMODE.RoundSettings.ShowAdminsOnScoreboard = net.ReadBool()
+		GAMEMODE.RoundSettings.AdminPanelAllowed = net.ReadBool()
+		GAMEMODE.RoundSettings.ShowSpectateInfo = net.ReadBool()
 		GAMEMODE.RoundSettings.RoundMaxLength = net.ReadInt(32)
 	end
 
@@ -59,7 +59,7 @@ end)
 
 net.Receive("DeclareWinner",function()
 	local data = {}
-	data.reason = net.ReadUInt(8)
+	data.reason = net.ReadUInt(2)
 	data.murderer = net.ReadEntity()
 	data.murdererColor = net.ReadVector()
 	data.murdererName = net.ReadString()
@@ -67,9 +67,7 @@ net.Receive("DeclareWinner",function()
 	-- end
 	data.collectedLoot = {}
 
-	while true do
-		local cont = net.ReadUInt(8)
-		if cont == 0 then break end
+	while net.ReadBool() do
 		local t = {}
 		t.player = net.ReadEntity()
 
