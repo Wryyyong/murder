@@ -1,5 +1,4 @@
 local PlayerMeta = FindMetaTable("Player")
---local EntityMeta = FindMetaTable("Entity")
 
 if not LootItems then
 	LootItems = {}
@@ -126,14 +125,8 @@ end
 function GM:PlayerPickupLoot(ply,ent)
 	ply.LootCollected = math.Clamp(ply.LootCollected + 1,0,255)
 
-	if not ply:GetMurderer() then
-		if ply.LootCollected == 5 then
-			giveMagnum(ply)
-		end
-
-		if ply.LootCollected % 15 == 0 then
-			giveMagnum(ply)
-		end
+	if not ply:GetMurderer() and ply.LootCollected % 10 == 5 then
+		giveMagnum(ply)
 	end
 
 	ply:EmitSound("ambient/levels/canals/windchime2.wav",100,math.random(40,160))
