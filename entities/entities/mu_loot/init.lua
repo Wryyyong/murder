@@ -24,7 +24,7 @@ function ENT:Use(ply)
 		phys:EnableMotion(true)
 	end
 
-	hook.Call("PlayerPickupLoot",GAMEMODE,ply,self)
+	hook.Run("PlayerPickupLoot",ply,self)
 end
 
 function ENT:Think()

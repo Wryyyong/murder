@@ -36,11 +36,9 @@ net.Receive("SetRound",function()
 
 	if roundState == GAMEMODE.Round.Playing then
 		timer.Simple(0.2,function()
-			local pitch = math.random(70,140)
+			local lply = LocalPlayer()
 
-			if IsValid(LocalPlayer()) then
-				LocalPlayer():EmitSound("StartRoundScream")
-			end
+			lply:EmitSound("StartRoundScream")
 		end)
 
 		GAMEMODE.LootCollected = 0

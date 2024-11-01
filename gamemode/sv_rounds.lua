@@ -299,7 +299,7 @@ function GM:EndTheRound(reason,murderer)
 
 	self.RoundUnFreezePlayers = nil
 	self.MurdererLastKill = nil
-	hook.Call("OnEndRound")
+	hook.Run("OnEndRound")
 	hook.Run("OnEndRoundResult",reason)
 	self.RoundCount = self.RoundCount + 1
 	local limit = self.RoundLimit:GetInt()
@@ -327,9 +327,10 @@ function GM:StartNewRound()
 	end
 
 	local ct = ChatText()
+	local curTime = CurTime()
 	ct:Add(translate.roundStarted)
 	ct:SendAll()
-	self.RoundUnFreezePlayers = CurTime() + 10
+	self.RoundUnFreezePlayers = curTime + 10
 	players = team.GetPlayers(2)
 
 	for _,ply in pairs(players) do
@@ -392,10 +393,11 @@ function GM:StartNewRound()
 		magnum:Give("weapon_mu_magnum")
 	end
 
-	self.MurdererLastKill = CurTime()
+	self.MurdererLastKill = curTime
 	self:SetRound(self.Round.Playing)
-	self.RoundStarted = CurTime()
-	hook.Call("OnStartRound")
+	self.RoundStarted = curTime
+	self.NextSpawnLoot = curTime
+	hook.Run("OnStartRound")
 end
 
 function GM:PlayerLeavePlay(ply)
@@ -466,7 +468,7 @@ function GM:RotateMap()
 	local ct = ChatText()
 	ct:Add(Translator:QuickVar(translate.mapChange,"map",nextMap))
 	ct:SendAll()
-	hook.Call("OnChangeMap",GAMEMODE)
+	hook.Run("OnChangeMap")
 
 	timer.Simple(5,function()
 		RunConsoleCommand("changelevel",nextMap)

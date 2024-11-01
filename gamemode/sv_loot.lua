@@ -51,10 +51,8 @@ function GM:SpawnLoot()
 end
 
 function GM:SpawnLootItem(data)
-	for _,ent in pairs(ents.FindByClass("mu_loot")) do
-		if ent.LootData == data then
-			ent:Remove()
-		end
+	for _,ent in ipairs(ents.FindByClass("mu_loot")) do
+		if ent.LootData == data then return end
 	end
 
 	local ent = ents.Create("mu_loot")
@@ -69,14 +67,18 @@ function GM:SpawnLootItem(data)
 end
 
 function GM:LootThink()
-	if self:GetRound() == 1 and (not self.LastSpawnLoot or self.LastSpawnLoot < CurTime()) then
-		self.LastSpawnLoot = CurTime() + 12
-		local data = table.Random(LootItems)
+	if not (self:GetRound() == 1 and self.NextSpawnLoot > CurTime()) then return end
 
-		if data then
-			self:SpawnLootItem(data)
-		end
-	end
+	timer.Simple(3,function()
+		local spawnSuccess
+		repeat
+			local data = LootItems[math.random(1,#LootItems)]
+			if not data then continue end
+			spawnSuccess = self:SpawnLootItem(data)
+		until spawnSuccess
+
+		self.NextSpawnLoot = CurTime() + math.random(15,30)
+	end)
 end
 
 function GM:SaveLootData()
