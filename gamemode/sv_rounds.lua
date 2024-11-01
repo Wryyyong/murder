@@ -440,20 +440,9 @@ concommand.Add("mu_forcenextmurderer",function(ply,_,args)
 end)
 
 function GM:ChangeMap()
-	if #self.MapList > 0 then
-		if MapVote then
-			-- only match maps that we have specified
-			local prefix = {}
-
-			for _,map in pairs(self.MapList) do
-				table.insert(prefix,map .. "%.bsp$")
-			end
-
-			MapVote.Start(nil,nil,nil,prefix)
-
-			return
-		end
-
+	if MapVote then
+		MapVote.Start()
+	elseif #self.MapList > 0 then
 		self:RotateMap()
 	end
 end
